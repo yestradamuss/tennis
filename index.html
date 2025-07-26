@@ -1,173 +1,271 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>코트 예약 요금 계산기</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
-    <style>
-        /* 기본 스타일은 style.css에 있지만, 여기서는 header 버튼 위치를 위한 최소한의 스타일을 추가 */
-        header {
-            position: relative; /* 자식 요소를 위한 기준점 */
-            padding: 20px; /* 상단 여백 */
-            text-align: center; /* 제목 중앙 정렬 */
-        }
-        .header-buttons {
-            position: absolute; /* 절대 위치 지정 */
-            top: 20px; /* 상단에서 20px */
-            right: 20px; /* 오른쪽에서 20px */
-            display: flex; /* 버튼들을 가로로 정렬 */
-            gap: 10px; /* 버튼 사이 간격 */
-        }
-        .header-buttons button, .header-buttons a {
-            padding: 8px 15px;
-            background-color: #4CAF50; /* 버튼 배경색 */
-            color: white; /* 글자색 */
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none; /* 링크 밑줄 제거 */
-            font-size: 14px;
-            display: inline-block; /* 링크도 버튼처럼 보이게 */
-            line-height: normal; /* 텍스트 정렬 보정 */
-        }
-        .header-buttons button:hover, .header-buttons a:hover {
-            background-color: #45a049;
-        }
-    </style>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>코트 예약 요금 계산기</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>코트 예약 요금 계산기</h1>
-        <div class="header-buttons">
-            <a href="https://script.google.com/macros/s/AKfycbzK0WSHt8v7Fep25FSKPyEpww3XYIqRMmr54Op1oEIYqjAwLSiucyasz2xo8bbgHCgHnQ/exec" target="_blank" id="rankingBoardButton">랭킹보드</a>
-        </div>
+  <div class="container">
+    <header class="header-section">
+      <h1>코트 예약 요금 계산기</h1>
+      <a href="https://script.google.com/macros/s/AKfycbzK0WSHt8v7Fep25FSKPyEpww3XYIqRMmr54Op1oEIYqjAwLSiucyasz2xo8bbgHCgHnQ/exec" target="_blank" id="rankingBoardButton" class="ranking-board-button">랭킹보드</a>
     </header>
 
-    <div class="container">
-        <section class="input-section">
-            <h2>코트 예약 정보</h2>
-            <div class="input-group">
-                <label for="dateInput">날짜:</label>
-                <input type="date" id="dateInput">
-            </div>
-            <div class="input-group">
-                <label for="startTime">시작 시간:</label>
-                <select id="startTime">
-                    </select>
-            </div>
-            <div class="input-group">
-                <label for="endTime">종료 시간:</label>
-                <select id="endTime">
-                    </select>
-            </div>
-
-            <h2>코트 대여 정보</h2>
-            <div class="input-group">
-                <label for="indoorCourtCount">실내 코트 대여 수:</label>
-                <input type="number" id="indoorCourtCount" value="0" min="0">
-                <div class="button-group">
-                    <button data-target="indoorCourtCount" data-value="0">0개</button>
-                    <button data-target="indoorCourtCount" data-value="1">1개</button>
-                    <button data-target="indoorCourtCount" data-value="2">2개</button>
-                    <button data-target="indoorCourtCount" data-value="3">3개</button>
-                    <button data-target="indoorCourtCount" data-value="4">4개</button>
-                </div>
-            </div>
-            <div class="input-group">
-                <label for="indoorDiscountCount">실내 코트 감면 대상 수:</label>
-                <input type="number" id="indoorDiscountCount" value="0" min="0">
-                <div class="button-group">
-                    <button data-target="indoorDiscountCount" data-value="0">0개</button>
-                    <button data-target="indoorDiscountCount" data-value="1">1개</button>
-                    <button data-target="indoorDiscountCount" data-value="2">2개</button>
-                    <button data-target="indoorDiscountCount" data-value="3">3개</button>
-                    <button data-target="indoorDiscountCount" data-value="4">4개</button>
-                </div>
-            </div>
-            <div class="input-group">
-                <label for="outdoorCourtCount">실외 코트 대여 수:</label>
-                <input type="number" id="outdoorCourtCount" value="0" min="0">
-                <div class="button-group">
-                    <button data-target="outdoorCourtCount" data-value="0">0개</button>
-                    <button data-target="outdoorCourtCount" data-value="1">1개</button>
-                    <button data-target="outdoorCourtCount" data-value="2">2개</button>
-                    <button data-target="outdoorCourtCount" data-value="3">3개</button>
-                    <button data-target="outdoorCourtCount" data-value="4">4개</button>
-                </div>
-            </div>
-            <div class="input-group">
-                <label for="outdoorDiscountCount">실외 코트 감면 대상 수:</label>
-                <input type="number" id="outdoorDiscountCount" value="0" min="0">
-                <div class="button-group">
-                    <button data-target="outdoorDiscountCount" data-value="0">0개</button>
-                    <button data-target="outdoorDiscountCount" data-value="1">1개</button>
-                    <button data-target="outdoorDiscountCount" data-value="2">2개</button>
-                    <button data-target="outdoorDiscountCount" data-value="3">3개</button>
-                    <button data-target="outdoorDiscountCount" data-value="4">4개</button>
-                </div>
-            </div>
-
-            <h2>인원 정보</h2>
-            <div class="input-group">
-                <label for="totalParticipants">총 인원:</label>
-                <input type="number" id="totalParticipants" value="1" min="1">
-                <div class="button-group">
-                    <button data-target="totalParticipants" data-value="4">4명</button>
-                    <button data-target="totalParticipants" data-value="5">5명</button>
-                    <button data-target="totalParticipants" data-value="6">6명</button>
-                    <button data-target="totalParticipants" data-value="7">7명</button>
-                    <button data-target="totalParticipants" data-value="8">8명</button>
-                    <button data-target="totalParticipants" data-value="9">9명</button>
-                    <button data-target="totalParticipants" data-value="10">10명</button>
-                    <button data-target="totalParticipants" data-value="11">11명</button>
-                    <button data-target="totalParticipants" data-value="12">12명</button>
-                </div>
-            </div>
-            <div class="input-group">
-                <label for="ballProviders">테니스공 제공자 수:</label>
-                <select id="ballProviders">
-                    <option value="0">0명</option>
-                    <option value="1">1명</option>
-                    <option value="2">2명</option>
-                    <option value="3">3명</option>
-                    <option value="4">4명</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label for="firstBallProviderBalls">첫 번째 제공자 공 개수:</label>
-                <select id="firstBallProviderBalls">
-                    <option value="0">0개</option>
-                    <option value="1">1개</option>
-                    <option value="2">2개</option>
-                    <option value="3">3개</option>
-                    <option value="4">4개</option>
-                </select>
-            </div>
-
-            <button id="calculateBtn">요금 계산</button>
-        </section>
-
-        <section class="result-section" id="resultSection" style="display: none;">
-            <h2>계산 결과</h2>
-            <div class="result-box">
-                <p><span class="icon">🎾</span> 총 코트 대여료: <span id="totalCourtFee"></span>원</p>
-                <p><span class="icon">🎾</span> 총 테니스 비용 (공 포함): <span id="totalTennisCost"></span>원</p>
-                <h3><span class="icon">💰</span> 1. 일반 참가자 송금액: <span id="generalParticipantFee"></span>원</h3>
-                <h3><span class="icon">💲</span> 2. 테니스공 제공자 정산:</h3>
-                <div id="ballProviderSettlements">
-                    </div>
-                <h3><span class="icon">⭐</span> 코트 대여 임무: <span id="courtDutyPerson"></span></h3>
-            </div>
-            <div class="share-options">
-                <button id="kakaoShareButton">카카오톡으로 공유하기</button>
-                <p id="infoMessage" style="display: none; color: red;"></p>
-            </div>
-            <button id="resetBtn">새로 계산하기</button>
-        </section>
+    <div class="form-group">
+      <label for="date">날짜:</label>
+      <input type="date" id="date" name="date">
     </div>
 
-    <script src="script.js"></script>
+    <div class="form-group">
+      <label for="startTime">시작 시간:</label>
+      <select id="startTime" name="startTime">
+        <option value="06:00">06:00</option>
+        <option value="07:00">07:00</option>
+        <option value="08:00">08:00</option>
+        <option value="09:00">09:00</option>
+        <option value="10:00">10:00</option>
+        <option value="11:00">11:00</option>
+        <option value="12:00">12:00</option>
+        <option value="13:00">13:00</option>
+        <option value="14:00">14:00</option>
+        <option value="15:00">15:00</option>
+        <option value="16:00">16:00</option>
+        <option value="17:00">17:00</option>
+        <option value="18:00">18:00</option>
+        <option value="19:00">19:00</option>
+        <option value="20:00">20:00</option>
+        <option value="21:00">21:00</option>
+        <option value="22:00">22:00</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="endTime">종료 시간:</label>
+      <select id="endTime" name="endTime">
+        <option value="07:00">07:00</option>
+        <option value="08:00">08:00</option>
+        <option value="09:00">09:00</option>
+        <option value="10:00">10:00</option>
+        <option value="11:00">11:00</option>
+        <option value="12:00">12:00</option>
+        <option value="13:00">13:00</option>
+        <option value="14:00">14:00</option>
+        <option value="15:00">15:00</option>
+        <option value="16:00">16:00</option>
+        <option value="17:00">17:00</option>
+        <option value="18:00">18:00</option>
+        <option value="19:00">19:00</option>
+        <option value="20:00">20:00</option>
+        <option value="21:00">21:00</option>
+        <option value="22:00">22:00</option>
+        <option value="23:00">23:00</option>
+      </select>
+    </div>
+
+    <h2>코트 대여 정보</h2>
+
+    <div class="form-group">
+      <label for="indoorCourts">실내 코트 대여 수:</label>
+      <input type="number" id="indoorCourts" name="indoorCourts" min="0" value="0">
+      <div class="court-buttons">
+        <button type="button" onclick="setCourtValue('indoorCourts', 0)">0개</button>
+        <button type="button" onclick="setCourtValue('indoorCourts', 1)">1개</button>
+        <button type="button" onclick="setCourtValue('indoorCourts', 2)">2개</button>
+        <button type="button" onclick="setCourtValue('indoorCourts', 3)">3개</button>
+        <button type="button" onclick="setCourtValue('indoorCourts', 4)">4개</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="indoorDiscountCourts">실내 코트 감면 대상 수:</label>
+      <input type="number" id="indoorDiscountCourts" name="indoorDiscountCourts" min="0" value="0">
+      <div class="court-buttons">
+        <button type="button" onclick="setCourtValue('indoorDiscountCourts', 0)">0개</button>
+        <button type="button" onclick="setCourtValue('indoorDiscountCourts', 1)">1개</button>
+        <button type="button" onclick="setCourtValue('indoorDiscountCourts', 2)">2개</button>
+        <button type="button" onclick="setCourtValue('indoorDiscountCourts', 3)">3개</button>
+        <button type="button" onclick="setCourtValue('indoorDiscountCourts', 4)">4개</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="outdoorCourts">실외 코트 대여 수:</label>
+      <input type="number" id="outdoorCourts" name="outdoorCourts" min="0" value="0">
+      <div class="court-buttons">
+        <button type="button" onclick="setCourtValue('outdoorCourts', 0)">0개</button>
+        <button type="button" onclick="setCourtValue('outdoorCourts', 1)">1개</button>
+        <button type="button" onclick="setCourtValue('outdoorCourts', 2)">2개</button>
+        <button type="button" onclick="setCourtValue('outdoorCourts', 3)">3개</button>
+        <button type="button" onclick="setCourtValue('outdoorCourts', 4)">4개</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="outdoorDiscountCourts">실외 코트 감면 대상 수:</label>
+      <input type="number" id="outdoorDiscountCourts" name="outdoorDiscountCourts" min="0" value="0">
+      <div class="court-buttons">
+        <button type="button" onclick="setCourtValue('outdoorDiscountCourts', 0)">0개</button>
+        <button type="button" onclick="setCourtValue('outdoorDiscountCourts', 1)">1개</button>
+        <button type="button" onclick="setCourtValue('outdoorDiscountCourts', 2)">2개</button>
+        <button type="button" onclick="setCourtValue('outdoorDiscountCourts', 3)">3개</button>
+        <button type="button" onclick="setCourtValue('outdoorDiscountCourts', 4)">4개</button>
+      </div>
+    </div>
+
+    <h2>인원 정보</h2>
+
+    <div class="form-group">
+      <label for="totalPeople">총 인원:</label>
+      <input type="number" id="totalPeople" name="totalPeople" min="4" max="16" value="4">
+      <div class="people-buttons">
+        <button type="button" onclick="setPeopleValue(4)">4명</button>
+        <button type="button" onclick="setPeopleValue(5)">5명</button>
+        <button type="button" onclick="setPeopleValue(6)">6명</button>
+        <button type="button" onclick="setPeopleValue(7)">7명</button>
+        <button type="button" onclick="setPeopleValue(8)">8명</button>
+        <button type="button" onclick="setPeopleValue(9)">9명</button>
+        <button type="button" onclick="setPeopleValue(10)">10명</button>
+        <button type="button" onclick="setPeopleValue(11)">11명</button>
+        <button type="button" onclick="setPeopleValue(12)">12명</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="ballProviders">테니스공 제공자 수:</label>
+      <select id="ballProviders" name="ballProviders">
+        <option value="0">0명</option>
+        <option value="1">1명</option>
+        <option value="2">2명</option>
+        <option value="3">3명</option>
+        <option value="4">4명</option>
+      </select>
+      <div class="people-buttons">
+        <button type="button" onclick="setBallProviders(0)">0명</button>
+        <button type="button" onclick="setBallProviders(1)">1명</button>
+        <button type="button" onclick="setBallProviders(2)">2명</button>
+        <button type="button" onclick="setBallProviders(3)">3명</button>
+        <button type="button" onclick="setBallProviders(4)">4명</button>
+      </div>
+    </div>
+
+    <div class="form-group" id="ballProvider1Group" style="display:none;">
+      <label for="ballProvider1Balls">첫 번째 제공자 공 개수:</label>
+      <select id="ballProvider1Balls" name="ballProvider1Balls">
+        <option value="0">0개</option>
+        <option value="1">1개</option>
+        <option value="2">2개</option>
+        <option value="3">3개</option>
+        <option value="4">4개</option>
+        <option value="5">5개</option>
+        <option value="6">6개</option>
+        <option value="7">7개</option>
+        <option value="8">8개</option>
+        <option value="9">9개</option>
+        <option value="10">10개</option>
+      </select>
+      <div class="people-buttons">
+        <button type="button" onclick="setBallCount('ballProvider1Balls', 0)">0개</button>
+        <button type="button" onclick="setBallCount('ballProvider1Balls', 1)">1개</button>
+        <button type="button" onclick="setBallCount('ballProvider1Balls', 2)">2개</button>
+        <button type="button" onclick="setBallCount('ballProvider1Balls', 3)">3개</button>
+        <button type="button" onclick="setBallCount('ballProvider1Balls', 4)">4개</button>
+      </div>
+    </div>
+
+    <div class="form-group" id="ballProvider2Group" style="display:none;">
+      <label for="ballProvider2Balls">두 번째 제공자 공 개수:</label>
+      <select id="ballProvider2Balls" name="ballProvider2Balls">
+        <option value="0">0개</option>
+        <option value="1">1개</option>
+        <option value="2">2개</option>
+        <option value="3">3개</option>
+        <option value="4">4개</option>
+        <option value="5">5개</option>
+        <option value="6">6개</option>
+        <option value="7">7개</option>
+        <option value="8">8개</option>
+        <option value="9">9개</option>
+        <option value="10">10개</option>
+      </select>
+      <div class="people-buttons">
+        <button type="button" onclick="setBallCount('ballProvider2Balls', 0)">0개</button>
+        <button type="button" onclick="setBallCount('ballProvider2Balls', 1)">1개</button>
+        <button type="button" onclick="setBallCount('ballProvider2Balls', 2)">2개</button>
+        <button type="button" onclick="setBallCount('ballProvider2Balls', 3)">3개</button>
+        <button type="button" onclick="setBallCount('ballProvider2Balls', 4)">4개</button>
+      </div>
+    </div>
+
+    <div class="form-group" id="ballProvider3Group" style="display:none;">
+      <label for="ballProvider3Balls">세 번째 제공자 공 개수:</label>
+      <select id="ballProvider3Balls" name="ballProvider3Balls">
+        <option value="0">0개</option>
+        <option value="1">1개</option>
+        <option value="2">2개</option>
+        <option value="3">3개</option>
+        <option value="4">4개</option>
+        <option value="5">5개</option>
+        <option value="6">6개</option>
+        <option value="7">7개</option>
+        <option value="8">8개</option>
+        <option value="9">9개</option>
+        <option value="10">10개</option>
+      </select>
+      <div class="people-buttons">
+        <button type="button" onclick="setBallCount('ballProvider3Balls', 0)">0개</button>
+        <button type="button" onclick="setBallCount('ballProvider3Balls', 1)">1개</button>
+        <button type="button" onclick="setBallCount('ballProvider3Balls', 2)">2개</button>
+        <button type="button" onclick="setBallCount('ballProvider3Balls', 3)">3개</button>
+        <button type="button" onclick="setBallCount('ballProvider3Balls', 4)">4개</button>
+      </div>
+    </div>
+
+    <div class="form-group" id="ballProvider4Group" style="display:none;">
+      <label for="ballProvider4Balls">네 번째 제공자 공 개수:</label>
+      <select id="ballProvider4Balls" name="ballProvider4Balls">
+        <option value="0">0개</option>
+        <option value="1">1개</option>
+        <option value="2">2개</option>
+        <option value="3">3개</option>
+        <option value="4">4개</option>
+        <option value="5">5개</option>
+        <option value="6">6개</option>
+        <option value="7">7개</option>
+        <option value="8">8개</option>
+        <option value="9">9개</option>
+        <option value="10">10개</option>
+      </select>
+      <div class="people-buttons">
+        <button type="button" onclick="setBallCount('ballProvider4Balls', 0)">0개</button>
+        <button type="button" onclick="setBallCount('ballProvider4Balls', 1)">1개</button>
+        <button type="button" onclick="setBallCount('ballProvider4Balls', 2)">2개</button>
+        <button type="button" onclick="setBallCount('ballProvider4Balls', 3)">3개</button>
+        <button type="button" onclick="setBallCount('ballProvider4Balls', 4)">4개</button>
+      </div>
+    </div>
+
+    <button type="button" class="calculate-button" onclick="calculateFees()">요금 계산</button>
+    <button type="button" id="kakaoShareButton" style="display: none;">카톡으로 공유하기</button>
+
+    <div id="loadingMessage" style="display:none;">
+      계산 중입니다...
+    </div>
+
+    <div id="result" class="result-box" style="display:none;">
+      <h2 id="calculationResultTitle">계산 결과</h2>
+      <p id="totalCourtFee"></p>
+      <p id="totalTennisCost"></p>
+      <div id="individualCosts"></div>
+      <p id="courtRentalDutyDisplay" style="margin-top:15px;"></p>
+    </div>
+    <p id="error" class="error-message" style="display:none;"></p>
+    <p id="infoMessage" class="error-message" style="display:none;"></p>
+
+  </div>
+
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

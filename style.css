@@ -200,8 +200,8 @@ select:focus {
 }
 
 
-/* 랭킹보드 버튼 스타일 (기존 점수 기록 버튼 스타일 재활용) */
-.ranking-board-button { /* 클래스명 변경 */
+/* 랭킹보드 버튼 스타일 */
+.ranking-board-button {
     position: absolute; /* 절대 위치 */
     top: 15px; /* 제목 위쪽 여백을 15px로 살짝 줄여서 제목과 버튼 간격을 조절 */
     right: 20px; /* 우측 정렬 */
@@ -217,7 +217,6 @@ select:focus {
     white-space: nowrap;
     box-shadow: 0 2px 5px rgba(255, 193, 7, 0.4);
 
-    /* === 추가 및 변경된 속성 === */
     z-index: 1000; /* 매우 높은 z-index로 다른 모든 요소 위에 오도록 강제 */
     display: flex; /* 내부 텍스트를 중앙에 정렬하기 위해 flexbox 사용 */
     align-items: center; /* 세로 중앙 정렬 */
@@ -226,22 +225,32 @@ select:focus {
     min-height: 38px; /* 최소 높이를 지정하여 클릭 가능한 영역 확보 (padding 고려) */
     box-sizing: border-box; /* 패딩이 너비/높이에 포함되도록 */
 }
-.ranking-board-button:hover { /* 클래스명 변경 */
+.ranking-board-button:hover {
     background-color: #E0A800;
     transform: translateY(-1px);
     box-shadow: 0 3px 8px rgba(255, 193, 7, 0.5);
 }
 
-/* 카카오톡 버튼 전용 스타일 - 숨김 처리 */
+/* 카카오톡 버튼 전용 스타일 */
 #kakaoShareButton {
-    display: none;
+    /* display 속성은 JavaScript에서 제어되므로 여기서는 제거 */
     background-color: #ffeb00;
     color: #3c1e1e;
     font-weight: bold;
     margin-top: 20px;
+    width: 100%; /* 너비를 100%로 설정 */
+    padding: 15px; /* 계산 버튼과 동일하게 패딩 설정 */
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* 그림자 추가 */
 }
 #kakaoShareButton:hover {
     background-color: #fada00;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
 }
 
 /* 로딩 메시지 스타일 */
@@ -261,26 +270,56 @@ select:focus {
 }
 
 /* 계산 결과 섹션 스타일 (원래대로 복구) */
-.result-box h3#individualCostsTitle {
-    color: #007BFF; /* 진한 파란색 - 테니스 코트 라인 색상 연상 */
+/* result-box h2에 대한 스타일은 h2 일반 스타일로 대체되거나 이미 정의되어 있으므로 제거.
+   만약 result-box 안의 h2만 특별히 스타일링하고 싶다면 유지 */
+.result-box h2#calculationResultTitle { /* 이 ID는 현재 HTML에 없지만, 만약 있다면 이 스타일이 적용됩니다. */
+    color: #28a745; /* 산뜻한 녹색 - 잔디 코트 연상 */
     text-align: center;
     margin-top: 0;
     margin-bottom: 15px;
-    font-size: 1.6em; /* 폰트 크기 조정 */
-    font-weight: 700;
+    font-size: 1.6em;
     border-bottom: 2px solid #D4EDDA;
     padding-bottom: 10px;
+    font-weight: 700;
 }
 
-/* 기존 "1인당 비용 정산"을 이제 일반 참가자 송금액으로만 사용 */
-#individualCosts span { /* p 대신 span으로 변경하여 같은 줄에 나오도록 */
-  margin-bottom: 8px;
-  font-size: 1.1em; /* 폰트 크기 유지 */
-  font-weight: 700;
-  display: block; /* 각 항목이 블록으로 표시되도록 (기존 줄바꿈 유지) */
+/* 개인별 정산 제목 스타일 */
+.result-box h3 {
+    color: #28a745;
+    text-align: center;
+    margin-top: 25px; /* 위쪽 마진 추가 */
+    margin-bottom: 15px;
+    font-size: 1.4em;
+    border-bottom: 1px solid #D4EDDA; /* 얇은 밑줄 */
+    padding-bottom: 5px;
 }
-/* 특정 항목에 대해서만 줄바꿈 제거 */
-#individualCosts span.inline-item {
-    display: inline; /* 같은 줄에 나오도록 */
-    margin-right: 10px; /* 항목 간 간격 */
+
+/* 개별 정산 항목 p 태그 스타일 */
+#individualCosts p {
+  margin-bottom: 8px;
+  font-size: 1.05em; /* 결과 텍스트 폰트 크기 미세 조정 */
+  font-weight: normal; /* 결과 텍스트 굵기 조정 */
+  color: #333; /* 텍스트 색상 조정 */
+}
+
+/* 특정 strong 태그에 대한 색상 */
+.result-box p strong {
+  color: #007BFF; /* 강조 색상 파란색 */
+}
+
+/* 코트 대여 임무 표시 */
+#courtRentalDutyDisplay {
+    margin-top: 20px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #D68D33; /* 주황색 계열 */
+    text-align: center;
+}
+
+/* infoMessage (에러 메시지와 동일한 스타일) */
+p#infoMessage {
+    color: #007BFF; /* 정보 메시지는 파란색으로 */
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
 }
