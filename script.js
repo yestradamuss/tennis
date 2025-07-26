@@ -1,16 +1,26 @@
 // ====== Helper Functions (Utilities) ======
-function getHourDiff(start, end) {
-    const startHour = parseInt(start.split(':')[0]);
-    const endHour = parseInt(end.split(':')[0]);
-    return endHour - startHour;
+function getHourMin(timeStr) {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return { hours, minutes };
 }
 
-function parseKoreanNumber(str) {
-    // 공백 및 콤마 제거
-    let cleanedStr = String(str).replace(/[\s,]/g, '');
-    // '원' 제거
-    cleanedStr = cleanedStr.replace(/원$/, '');
-    return parseInt(cleanedStr);
+function timeToMinutes(timeValue) {
+    if (typeof timeValue === 'string') {
+        const parts = timeValue.split(':');
+        if (parts.length === 2) {
+            const hours = Number(parts[0]);
+            const minutes = Number(parts[1]);
+            if (!isNaN(hours) && !isNaN(minutes)) {
+                return hours * 60 + minutes;
+            }
+        }
+        throw new Error(`시간 형식이 올바르지 않습니다: ${timeValue}. "HH:MM" 형식이어야 합니다.`);
+    } else if (timeValue instanceof Date) {
+        return timeValue.getHours() * 60 + timeValue.getMinutes();
+    } else if (typeof timeValue === 'number') {
+        return Math.round(timeValue * 60);
+    }
+    throw new Error(`시간 형식이 올바르지 않습니다: ${timeValue}.`);
 }
 
 function formatCurrency(amount) {
@@ -45,6 +55,27 @@ function setBallCount(id, value) {
 }
 
 // ====== Default Value Updaters ======
+function populateTimeOptions() {
+    const startTimeSelect = document.getElementById('startTime');
+    const endTimeSelect = document.getElementById('endTime');
+    startTimeSelect.innerHTML = '';
+    endTimeSelect.innerHTML = '';
+
+    for (let h = 0; h < 24; h++) {
+        const hourStr = String(h).padStart(2, '0');
+        const optionText = `${hourStr}:00`;
+        const startOption = document.createElement('option');
+        startOption.value = optionText;
+        startOption.textContent = optionText;
+        startTimeSelect.appendChild(startOption);
+
+        const endOption = document.createElement('option');
+        endOption.value = optionText;
+        endOption.textContent = optionText;
+        endTimeSelect.appendChild(endOption);
+    }
+}
+
 function updateTimeDefaults() {
     const dateInput = document.getElementById('date');
     const startTimeSelect = document.getElementById('startTime');
@@ -88,7 +119,7 @@ function updateBallProviderDefaults() {
     for (let i = 0; i < ballProviderGroups.length; i++) {
         if (ballProviderGroups[i]) { // 요소가 존재하는지 확인
             if (providers >= (i + 1)) {
-                ballProviderGroups[i].style.display = 'block';
+                ballProviderGroups[i].style.display = 'flex'; // flex로 변경하여 레이아웃 유지
                 ballProviderBallsSelects[i].disabled = false;
                 if (ballProviderBallsSelects[i].value === "0" || ballProviderBallsSelects[i].value === "") {
                     ballProviderBallsSelects[i].value = "1"; // 기본값으로 1개 설정
@@ -114,6 +145,11 @@ function updateCourtRelatedDefaults() {
     if (currentTotalPeople < suggestedTotalPeople) {
         totalPeopleInput.value = suggestedTotalPeople;
     }
+     // 총 인원 최소값 4 고정 (HTML에도 min="4" 있음)
+    if (parseInt(totalPeopleInput.value) < 4) {
+        totalPeopleInput.value = 4;
+    }
+
 
     // 공 제공자 수 자동 설정 (수동 변경이 없었거나 0일 경우에만)
     const ballProvidersSelect = document.getElementById('ballProviders');
@@ -148,31 +184,50 @@ function updateCourtRelatedDefaults() {
     updateBallProviderDefaults(); // 공 제공자 수 변경 후 공 개수 입력 필드 업데이트
 }
 
-// ====== Main Calculation Logic (Transferred from Code.gs) ======
-function calculateFees() { // 함수 이름 변경: calculateCourtFees -> calculateFees
-    const dateStr = document.getElementById('date').value;
-    const startTimeStr = document.getElementById('startTime').value;
-    const endTimeStr = document.getElementById('endTime').value;
-    const indoorCourts = parseInt(document.getElementById('indoorCourts').value);
-    const indoorDiscountCourts = parseInt(document.getElementById('indoorDiscountCourts').value);
-    const outdoorCourts = parseInt(document.getElementById('outdoorCourts').value);
-    const outdoorDiscountCourts = parseInt(document.getElementById('outdoorDiscountCourts').value);
-    const totalPeople = parseInt(document.getElementById('totalPeople').value);
-    const ballProvidersCount = parseInt(document.getElementById('ballProviders').value);
+// ====== Hardcoded Rate Data (from Google Sheets logic) ======
 
-    const ballProviderBalls = [
-        parseInt(document.getElementById('ballProvider1Balls').value || 0),
-        parseInt(document.getElementById('ballProvider2Balls').value || 0),
-        parseInt(document.getElementById('ballProvider3Balls').value || 0),
-        parseInt(document.getElementById('ballProvider4Balls').value || 0)
-    ].slice(0, ballProvidersCount); // 실제 제공자 수만큼만 사용
+// 실내 코트 기본 대여료 (시간당, 조명 요금 제외)
+// 고객님 요청에 따라 평일 6,000원, 주말 12,000원 고정
+const INDOOR_COURT_BASE_RATES = {
+    'weekday': 6000,
+    'weekend': 12000
+};
+
+// 조명요금표 시트 데이터 (code.gs.txt에서 참조하던 내용)
+// Outdoor rates and lighting based on this table
+const LIGHT_RATES_DATA = [
+    { "분류": "야간", "시작시간": "20:00", "종료시간": "22:00", "평일이용료": 5000, "주말이용료": 10000, "조명요금": 4000, "월1": 0, "월2": 0, "월3": 0, "월4": 0, "월5": 0, "월6": 0, "월7": 1, "월8": 1, "월9": 1, "월10": 1, "월11": 0, "월12": 0 },
+    { "분류": "야간", "시작시간": "17:00", "종료시간": "22:00", "평일이용료": 5000, "주말이용료": 10000, "조명요금": 4000, "월1": 1, "월2": 1, "월3": 1, "월4": 0, "월5": 0, "월6": 0, "월7": 0, "월8": 0, "월9": 0, "월10": 0, "월11": 1, "월12": 1 },
+    { "분류": "조기", "시작시간": "05:00", "종료시간": "06:00", "평일이용료": 5000, "주말이용료": 10000, "조명요금": 4000, "월1": 1, "월2": 1, "월3": 1, "월4": 1, "월5": 1, "월6": 1, "월7": 1, "월8": 1, "월9": 1, "월10": 1, "월11": 1, "월12": 1 }
+];
+
+// 기타 상수 (고객님 요청에 따라 고정)
+const BALL_PRICE_PER_UNIT = 3500; // 기타요금 시트 B2
+const INDOOR_LIGHT_HOURLY_RATE = 4000; // 기타요금 시트 '실내조명' 항목
+const COURT_DISCOUNT_PERCENTAGE = 0.5; // 50% 할인 (할인정책 시트 '감면' 항목)
+
+// ====== Main Calculation Logic (Refactored to match code.gs.txt) ======
+function calculateFees() {
+    const dateStr = document.getElementById('date').value;
+    const startTimeValue = document.getElementById('startTime').value;
+    const endTimeValue = document.getElementById('endTime').value;
+    const indoorCourts = parseInt(document.getElementById('indoorCourts').value || 0);
+    const indoorDiscountCourts = parseInt(document.getElementById('indoorDiscountCourts').value || 0);
+    const outdoorCourts = parseInt(document.getElementById('outdoorCourts').value || 0);
+    const outdoorDiscountCourts = parseInt(document.getElementById('outdoorDiscountCourts').value || 0);
+    const totalPeople = parseInt(document.getElementById('totalPeople').value || 0);
+    const ballProviders = parseInt(document.getElementById('ballProviders').value || 0);
+
+    const ballProvider1Balls = parseInt(document.getElementById('ballProvider1Balls').value || 0);
+    const ballProvider2Balls = parseInt(document.getElementById('ballProvider2Balls').value || 0);
+    const ballProvider3Balls = parseInt(document.getElementById('ballProvider3Balls').value || 0);
+    const ballProvider4Balls = parseInt(document.getElementById('ballProvider4Balls').value || 0);
 
     const resultDiv = document.getElementById('result');
     const loadingMessage = document.getElementById('loadingMessage');
     const errorMessage = document.getElementById('error');
     const infoMessage = document.getElementById('infoMessage');
     const kakaoShareButton = document.getElementById('kakaoShareButton');
-
 
     loadingMessage.style.display = 'block';
     errorMessage.style.display = 'none';
@@ -182,111 +237,180 @@ function calculateFees() { // 함수 이름 변경: calculateCourtFees -> calcul
 
     try {
         const selectedDate = new Date(dateStr);
-        const dayOfWeek = selectedDate.getDay(); // 0:일, 1:월, ..., 6:토
-        const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5; // 월-금
-        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // 일-토
+        const selectedMonth = selectedDate.getMonth() + 1; // 1월은 1
+        const dayOfWeek = selectedDate.getDay(); // 0:일, 6:토
 
-        const startHour = parseInt(startTimeStr.split(':')[0]);
-        const endHour = parseInt(endTimeStr.split(':')[0]);
-        const totalCourtHours = endHour - startHour;
+        // 공휴일 정보는 클라이언트 측에서 동적으로 가져올 수 없어 제외됨 (주말만 고려)
+        const isWeekendOrHoliday = (dayOfWeek === 0 || dayOfWeek === 6); // 0:일, 6:토
 
-        if (totalCourtHours <= 0) {
-            throw new Error("종료 시간은 시작 시간보다 늦어야 합니다.");
-        }
+        // 유효성 검사
         if (indoorCourts + outdoorCourts === 0) {
             throw new Error("코트를 최소 1개 이상 대여해야 합니다.");
         }
-        if (totalPeople < 4) {
-            throw new Error("총 인원은 최소 4명 이상이어야 합니다.");
+        if (indoorDiscountCourts > indoorCourts || outdoorDiscountCourts > outdoorCourts) {
+            throw new Error("감면 대상 코트 수는 실제 코트 대여 수를 초과할 수 없습니다.");
+        }
+        if (ballProviders > totalPeople) {
+            throw new Error("테니스공 제공자 수는 총 인원수를 초과할 수 없습니다.");
+        }
+        if (ballProviders > 4) { // 최대 4명으로 제한
+            throw new Error("테니스공 제공자는 최대 4명까지 지정할 수 있습니다.");
+        }
+        if (totalPeople < 4 || totalPeople > 16) {
+            throw new Error("총 인원수는 4명에서 16명 사이여야 합니다.");
         }
 
-        // ====== 코트 요금 계산 로직 ======
-        const INDOOR_WEEKDAY_DAY_RATE = 20000;
-        const INDOOR_WEEKDAY_NIGHT_RATE = 25000;
-        const INDOOR_WEEKEND_RATE = 30000;
+        const selectedStartMin = timeToMinutes(startTimeValue);
+        const selectedEndMin = timeToMinutes(endTimeValue);
+        const durationMinutes = selectedEndMin - selectedStartMin;
 
-        const OUTDOOR_WEEKDAY_DAY_RATE = 5000;
-        const OUTDOOR_WEEKDAY_NIGHT_RATE = 7000;
-        const OUTDOOR_WEEKEND_RATE = 10000;
+        if (durationMinutes <= 0) {
+            throw new Error("종료 시간은 시작 시간보다 늦어야 합니다.");
+        }
+        if (durationMinutes % 60 !== 0) {
+            throw new Error("대여 시간은 1시간 단위로만 가능합니다.");
+        }
+        const totalOverlapHours = durationMinutes / 60; // 총 대여 시간 (시간 단위)
 
-        const INDOOR_DISCOUNT_PERCENTAGE = 0.5; // 50% 할인
-        const OUTDOOR_DISCOUNT_PERCENTAGE = 0.5; // 50% 할인
+        let totalCourtUsageFee = 0; // 코트 대여료 (할인 적용)
+        let totalLightFee = 0;      // 조명비 (할인 미적용)
 
-        let totalCourtFee = 0;
+        // 1. 실내 코트 계산 로직
+        if (indoorCourts > 0) {
+            const indoorHourlyRate = isWeekendOrHoliday ? INDOOR_COURT_BASE_RATES.weekend : INDOOR_COURT_BASE_RATES.weekday;
 
-        for (let i = 0; i < totalCourtHours; i++) {
-            const currentHour = startHour + i;
-            let hourlyIndoorRate = 0;
-            let hourlyOutdoorRate = 0;
+            // 정상 실내 코트 요금
+            totalCourtUsageFee += (indoorCourts - indoorDiscountCourts) * indoorHourlyRate * totalOverlapHours;
+            // 할인 실내 코트 요금 (코트 대여료에만 할인 적용)
+            totalCourtUsageFee += indoorDiscountCourts * indoorHourlyRate * totalOverlapHours * COURT_DISCOUNT_PERCENTAGE;
+            // 실내 조명비 (할인 없음)
+            totalLightFee += indoorCourts * INDOOR_LIGHT_HOURLY_RATE * totalOverlapHours;
+        }
 
-            if (isWeekday) {
-                if (currentHour >= 6 && currentHour < 18) { // 평일 주간 (06시-17시)
-                    hourlyIndoorRate = INDOOR_WEEKDAY_DAY_RATE;
-                    hourlyOutdoorRate = OUTDOOR_WEEKDAY_DAY_RATE;
-                } else { // 평일 야간 (18시-22시)
-                    hourlyIndoorRate = INDOOR_WEEKDAY_NIGHT_RATE;
-                    hourlyOutdoorRate = OUTDOOR_WEEKDAY_NIGHT_RATE;
+        // 2. 실외 코트 계산 로직
+        if (outdoorCourts > 0) {
+            const defaultDaytimeCourtRate = isWeekendOrHoliday ? 4000 : 3000; // code.gs.txt의 기본 요금
+
+            for (let currentMin = selectedStartMin; currentMin < selectedEndMin; currentMin++) {
+                let courtRateForThisMinute = defaultDaytimeCourtRate;
+                let lightingRateForThisMinute = 0;
+
+                for (const lightingRow of LIGHT_RATES_DATA) {
+                    const monthColumn = `월${selectedMonth}`;
+                    // 월 컬럼 값이 1이고 야간/조기 분류인 경우만 고려
+                    if ((lightingRow['분류'] === '야간' || lightingRow['분류'] === '조기') && lightingRow[monthColumn] == 1) {
+                        const rateStartMin = timeToMinutes(lightingRow['시작시간']);
+                        const rateEndMin = timeToMinutes(lightingRow['종료시간']);
+
+                        if (currentMin >= rateStartMin && currentMin < rateEndMin) {
+                            courtRateForThisMinute = isWeekendOrHoliday ?
+                                parseFloat(lightingRow['주말이용료']) : parseFloat(lightingRow['평일이용료']);
+                            lightingRateForThisMinute = parseFloat(lightingRow['조명요금']) || 0;
+                            break; // 해당 시간에 적용되는 첫 규칙을 찾으면 루프 종료
+                        }
+                    }
                 }
-            } else if (isWeekend) { // 주말 및 공휴일 (시간대 구분 없음)
-                hourlyIndoorRate = INDOOR_WEEKEND_RATE;
-                hourlyOutdoorRate = OUTDOOR_WEEKEND_RATE;
+
+                // 분당 요금 계산 (시간당 요금을 60으로 나눔)
+                const courtRatePerMinute = courtRateForThisMinute / 60;
+                const lightingRatePerMinute = lightingRateForThisMinute / 60;
+
+                const outdoorNormalCourts = outdoorCourts - outdoorDiscountCourts;
+                // 코트 사용료 계산 (정상 + 할인)
+                totalCourtUsageFee += courtRatePerMinute * outdoorNormalCourts;
+                totalCourtUsageFee += courtRatePerMinute * outdoorDiscountCourts * COURT_DISCOUNT_PERCENTAGE; // 할인 적용
+
+                // 조명비 계산 (정상 + 할인 코트 모두 동일하게 적용, 할인 없음)
+                totalLightFee += lightingRatePerMinute * outdoorNormalCourts;
+                totalLightFee += lightingRatePerMinute * outdoorDiscountCourts;
             }
-
-            // 실내 코트 요금
-            totalCourtFee += (indoorCourts - indoorDiscountCourts) * hourlyIndoorRate;
-            totalCourtFee += indoorDiscountCourts * hourlyIndoorRate * INDOOR_DISCOUNT_PERCENTAGE;
-
-            // 실외 코트 요금
-            totalCourtFee += (outdoorCourts - outdoorDiscountCourts) * hourlyOutdoorRate;
-            totalCourtFee += outdoorDiscountCourts * hourlyOutdoorRate * OUTDOOR_DISCOUNT_PERCENTAGE;
         }
 
-        // 테니스공 비용 (공 1개당 7,000원)
-        const BALL_PRICE_PER_UNIT = 7000;
-        let totalBallCost = 0;
-        ballProviderBalls.forEach(count => {
-            totalBallCost += count * BALL_PRICE_PER_UNIT;
-        });
+        const totalRentalFee = Math.round(totalCourtUsageFee + totalLightFee); // 총 코트 대여료 = 코트 사용료 + 총 조명비
+        const totalBallsProvided = ballProvider1Balls + ballProvider2Balls + ballProvider3Balls + ballProvider4Balls;
+        const totalTennisBallCost = totalBallsProvided * BALL_PRICE_PER_UNIT;
+        const totalOverallCost = totalRentalFee + totalTennisBallCost; // 최종 총 비용 = 총 코트 대여료 + 총 공 비용
 
-        const totalTennisCost = totalCourtFee + totalBallCost;
-        const regularParticipantCost = totalTennisCost / totalPeople;
+        // --- 1인당 비용 정산 로직 ---
+        const finalIndividualCostsDisplay = [];
+        const sharePerPersonIncludingBalls = Math.round(totalOverallCost / totalPeople);
+        finalIndividualCostsDisplay.push(`**1. 일반 참가자 송금액:**`);
+        finalIndividualCostsDisplay.push(`  **${sharePerPersonIncludingBalls.toLocaleString()}원**`);
 
-        // 코트 대여 임무 분배 (간단한 로직, Apps Script에서 가져옴)
-        const courtRentalDuty = "이창민"; // 고정값
+        finalIndividualCostsDisplay.push(`\n**2. 테니스공 제공자 정산:**`);
+        const providerMessages = [];
+        const ballProvidersArray = [
+            { count: ballProvider1Balls, label: "공 제공자 1" },
+            { count: ballProvider2Balls, label: "공 제공자 2" },
+            { count: ballProvider3Balls, label: "공 제공자 3" },
+            { count: ballProvider4Balls, label: "공 제공자 4" }
+        ];
+
+        for (let i = 0; i < ballProviders; i++) {
+            const provider = ballProvidersArray[i];
+            if (!provider) continue;
+
+            const actualCostForProvider = provider.count * BALL_PRICE_PER_UNIT;
+            let netDifference = sharePerPersonIncludingBalls - actualCostForProvider;
+
+            if (provider.count === 0) {
+                 // 공을 제공한다고 선택했으나 실제 제공한 공이 없는 경우
+                providerMessages.push(`  - ${provider.label}: 추가 지불 없음`);
+            } else if (netDifference < 0) { // 지불해야 할 금액보다 실제 공 지출이 더 많으면 환급 (음수)
+                const refundAmount = Math.abs(netDifference);
+                let refundCalculationDetails = `${actualCostForProvider.toLocaleString()}원`;
+                let tempAmount = actualCostForProvider;
+                let deductedParts = [];
+                while (tempAmount >= sharePerPersonIncludingBalls) {
+                    tempAmount -= sharePerPersonIncludingBalls;
+                    deductedParts.push(sharePerPersonIncludingBalls.toLocaleString());
+                }
+                if (deductedParts.length > 0) {
+                    refundCalculationDetails += ` - ${deductedParts.join(' - ')}`;
+                }
+                refundCalculationDetails += ` = ${refundAmount.toLocaleString()}원 (총 ${refundAmount.toLocaleString()}원 환급)`;
+
+
+                providerMessages.push(`  - ${provider.label} (공값 ${actualCostForProvider.toLocaleString()}원):`);
+                providerMessages.push(`    ${refundCalculationDetails}`);
+                // if (resultOfSubtraction >= 0) {
+                //     providerMessages.push(`    (${sharePerPersonIncludingBalls.toLocaleString()}원 - ${refundAmount.toLocaleString()}원 = ${resultOfSubtraction.toLocaleString()}원)`);
+                // } else {
+                //      providerMessages.push(`    (${sharePerPersonIncludingBalls.toLocaleString()}원 - ${refundAmount.toLocaleString()}원 = ${resultOfSubtraction.toLocaleString()}원)`);
+                // }
+
+
+            } else if (netDifference > 0) { // 지불해야 할 금액보다 실제 공 지출이 더 적으면 추가 지불
+                providerMessages.push(`  - ${provider.label}: **${netDifference.toLocaleString()}원** 추가 지불`);
+            } else { // 0인 경우
+                providerMessages.push(`  - ${provider.label}: 정산 완료`);
+            }
+        }
+
+        if (providerMessages.length > 0) {
+            providerMessages.forEach(msg => finalIndividualCostsDisplay.push(msg));
+        } else {
+            finalIndividualCostsDisplay.push(`  - 없음`);
+        }
+
+        // --- 코트 대여 임무자 표시 로직 (하드코딩된 값으로 대체) ---
+        // 원래는 시트에서 동적으로 가져왔으나, 클라이언트 측에서 불가능하여 정적인 메시지로 변경
+        let courtRentalDutyName = "주말/공휴일 대여 시 표시됩니다."; // 기본 메시지
+        if (isWeekendOrHoliday) {
+            courtRentalDutyName = "이창민"; // 예시: 주말/공휴일 대여 시 고정된 이름
+        }
 
         // === 결과 표시 ===
-        document.getElementById('totalCourtFee').innerHTML = `🎾 <strong>총 코트 대여료:</strong> ${formatCurrency(totalCourtFee)}`;
-        document.getElementById('totalTennisCost').innerHTML = `🥎 <strong>총 테니스 비용 (공 포함):</strong> ${formatCurrency(totalTennisCost)}`;
+        document.getElementById('totalCourtFee').innerHTML = `🎾 <strong>총 코트 대여료:</strong> ${formatCurrency(totalRentalFee)}`;
+        document.getElementById('totalTennisCost').innerHTML = `🥎 <strong>총 테니스 비용 (공 포함):</strong> ${formatCurrency(totalOverallCost)}`;
 
-        let ballProviderDetailsHtml = "";
-        let totalRefundsForKakaoShare = 0; // 카카오 공유를 위한 총 환급액 합계
-
-        ballProviderBalls.forEach((ballCount, index) => {
-            if (ballCount > 0) {
-                const providerIndex = index + 1;
-                const costOfBallsProvided = ballCount * BALL_PRICE_PER_UNIT;
-                const netAmount = regularParticipantCost - costOfBallsProvided;
-
-                if (netAmount < 0) { // 공 제공자가 받을 돈이 있을 경우 (음수 -> 환급)
-                    const refund = Math.abs(netAmount);
-                    totalRefundsForKakaoShare += refund;
-                    ballProviderDetailsHtml += `<p>- 공 제공자 ${providerIndex} (공값 ${formatCurrency(costOfBallsProvided)}): ${formatCurrency(refund)} 환급</p>`;
-                } else if (netAmount > 0) { // 공 제공자가 낼 돈이 있을 경우 (양수 -> 송금)
-                    ballProviderDetailsHtml += `<p>- 공 제공자 ${providerIndex} (공값 ${formatCurrency(costOfBallsProvided)}): ${formatCurrency(netAmount)} 송금</p>`;
-                } else { // 정확히 맞아 떨어지는 경우
-                    ballProviderDetailsHtml += `<p>- 공 제공자 ${providerIndex} (공값 ${formatCurrency(costOfBallsProvided)}): 정산 완료</p>`;
-                }
-            }
-        });
-
+        // HTML 렌더링을 위해 <br> 태그로 줄바꿈 처리
         document.getElementById('individualCosts').innerHTML = `
             <h3>개인별 정산:</h3>
-            <p>💰 <strong>1. 일반 참가자 송금액:</strong> ${formatCurrency(regularParticipantCost)}</p>
-            <p><strong>2. 테니스공 제공자 정산:</strong></p>
-            ${ballProviderDetailsHtml}
+            ${finalIndividualCostsDisplay.join('<br>')}
         `;
 
-        document.getElementById('courtRentalDutyDisplay').innerHTML = `🌟 <strong>코트 대여 임무:</strong> ${courtRentalDuty}`;
+        document.getElementById('courtRentalDutyDisplay').innerHTML = `🌟 <strong>코트 대여 임무:</strong> ${courtRentalDutyName}`;
 
         resultDiv.style.display = 'block';
         loadingMessage.style.display = 'none';
@@ -295,18 +419,17 @@ function calculateFees() { // 함수 이름 변경: calculateCourtFees -> calcul
         if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {
             kakaoShareButton.style.display = 'block';
             kakaoShareButton.onclick = () => shareKakao(
-                formatCurrency(totalCourtFee),
-                formatCurrency(totalTennisCost),
-                formatCurrency(regularParticipantCost),
-                ballProviderBalls,
+                formatCurrency(totalRentalFee),
+                formatCurrency(totalOverallCost),
+                formatCurrency(sharePerPersonIncludingBalls),
+                ballProvidersArray.map(p => p.count), // 공 개수만 전달
                 BALL_PRICE_PER_UNIT,
-                totalRefundsForKakaoShare, // 여기서는 실제로 사용되지 않지만, API 인자 맞춰서 전달
-                courtRentalDuty
+                courtRentalDutyName
             );
         } else {
              console.warn("카카오 SDK가 초기화되지 않았거나 로드되지 않았습니다. JavaScript 키를 확인해주세요.");
-             kakaoShareButton.style.display = 'none'; // SDK 로드 안되면 버튼 숨김
-             infoMessage.textContent = "카카오톡 공유 기능을 사용하려면 카카오 개발자 사이트에서 JavaScript 키를 발급받아 script.js 파일의 Kakao.init() 부분에 설정해야 합니다.";
+             kakaoShareButton.style.display = 'none';
+             infoMessage.textContent = "카카오톡 공유 기능을 사용하려면 Kakao.init() 설정이 필요합니다.";
              infoMessage.style.display = 'block';
         }
 
@@ -318,8 +441,8 @@ function calculateFees() { // 함수 이름 변경: calculateCourtFees -> calcul
     }
 }
 
-// ====== Kakao Share Function (Transferred from Code.gs) ======
-function shareKakao(totalCourtFee, totalTennisCost, regularParticipantCost, ballProviderBalls, ballPricePerUnit, totalRefunds, courtRentalDuty) {
+// ====== Kakao Share Function ======
+function shareKakao(totalCourtFee, totalTennisCost, regularParticipantCost, ballProviderBallCounts, ballPricePerUnit, courtRentalDuty) {
     if (!Kakao.isInitialized()) {
         alert("카카오 SDK가 초기화되지 않았습니다. 개발자 키를 확인해주세요.");
         return;
@@ -327,30 +450,49 @@ function shareKakao(totalCourtFee, totalTennisCost, regularParticipantCost, ball
 
     let descriptionText = `🎾 코트 대여료: ${totalCourtFee}\n`;
     descriptionText += `🥎 총 비용: ${totalTennisCost}\n\n`;
-    descriptionText += `💰 일반 참가자 송금액: ${regularParticipantCost}\n\n`;
+    descriptionText += `**1. 일반 참가자 송금액:**\n  **${regularParticipantCost}**\n\n`;
 
     let ballProviderSummary = [];
-    ballProviderBalls.forEach((ballCount, index) => {
+    let providerIndexCounter = 1;
+    ballProviderBallCounts.forEach((ballCount) => {
         if (ballCount > 0) {
-            const providerIndex = index + 1;
-            const costOfBallsProvided = ballCount * ballPricePerUnit;
-            const netAmount = parseKoreanNumber(regularParticipantCost) - costOfBallsProvided;
+            const providerLabel = `공 제공자 ${providerIndexCounter}`;
+            const actualCostForProvider = ballCount * ballPricePerUnit;
+            const netDifferenceValue = parseFloat(regularParticipantCost.replace(/[^0-9.-]+/g,"")) - actualCostForProvider;
 
-            if (netAmount < 0) {
-                ballProviderSummary.push(`공 제공자 ${providerIndex} (공값 ${formatCurrency(costOfBallsProvided)}): ${formatCurrency(Math.abs(netAmount))} 환급`);
-            } else if (netAmount > 0) {
-                 ballProviderSummary.push(`공 제공자 ${providerIndex} (공값 ${formatCurrency(costOfBallsProvided)}): ${formatCurrency(netAmount)} 송금`);
+            if (netDifferenceValue < 0) {
+                const refundAmount = Math.abs(netDifferenceValue);
+                let refundCalculationDetails = `${actualCostForProvider.toLocaleString()}원`;
+                let tempAmount = actualCostForProvider;
+                let deductedParts = [];
+                const sharePerPersonNum = parseFloat(regularParticipantCost.replace(/[^0-9.-]+/g,""));
+                while (tempAmount >= sharePerPersonNum && sharePerPersonNum > 0) {
+                    tempAmount -= sharePerPersonNum;
+                    deductedParts.push(sharePerPersonNum.toLocaleString());
+                }
+                if (deductedParts.length > 0) {
+                    refundCalculationDetails += ` - ${deductedParts.join(' - ')}`;
+                }
+                refundCalculationDetails += ` = ${refundAmount.toLocaleString()}원 (총 ${refundAmount.toLocaleString()}원 환급)`;
+                
+                ballProviderSummary.push(`  - ${providerLabel} (공값 ${actualCostForProvider.toLocaleString()}원):\n    ${refundCalculationDetails}`);
+
+            } else if (netDifferenceValue > 0) {
+                 ballProviderSummary.push(`  - ${providerLabel}: **${netDifferenceValue.toLocaleString()}원** 추가 지불`);
             } else {
-                ballProviderSummary.push(`공 제공자 ${providerIndex} (공값 ${formatCurrency(costOfBallsProvided)}): 정산 완료`);
+                ballProviderSummary.push(`  - ${providerLabel}: 정산 완료`);
             }
         }
+        providerIndexCounter++; // 다음 제공자 인덱스 증가
     });
 
     if (ballProviderSummary.length > 0) {
-        descriptionText += `2. 테니스공 제공자 정산:\n${ballProviderSummary.join('\n')}\n\n`;
+        descriptionText += `**2. 테니스공 제공자 정산:**\n${ballProviderSummary.join('\n')}\n\n`;
+    } else {
+        descriptionText += `**2. 테니스공 제공자 정산:**\n  - 없음\n\n`;
     }
 
-    descriptionText += `🌟 코트 대여 임무: ${courtRentalDuty}`;
+    descriptionText += `🌟 **코트 대여 임무:** ${courtRentalDuty}`;
 
     Kakao.Share.sendDefault({
         objectType: 'text',
@@ -373,8 +515,9 @@ function shareKakao(totalCourtFee, totalTennisCost, regularParticipantCost, ball
 
 // ====== Event Listeners and Initial Load ======
 document.addEventListener('DOMContentLoaded', () => {
+    populateTimeOptions(); // 시간 드롭다운 채우기
     updateTimeDefaults(); // 날짜 및 시간 기본값 설정
-    // 공 제공자 수동 변경 여부 초기화 (필요시)
+    
     const ballProvidersSelect = document.getElementById('ballProviders');
     if (ballProvidersSelect) {
         ballProvidersSelect.dataset.manuallyChanged = 'false';
@@ -388,11 +531,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('endTime').addEventListener('change', calculateFees);
 
     // 코트 관련 입력 필드 (setCourtValue에서 이미 calculateFees 호출됨)
-    // 여기서는 updateCourtRelatedDefaults만 호출하도록 하여 중복 호출을 피하고 로직 흐름을 명확히 함
     document.getElementById('indoorCourts').addEventListener('change', updateCourtRelatedDefaults);
-    document.getElementById('indoorDiscountCourts').addEventListener('change', calculateFees); // 감면수는 직접 계산으로
+    document.getElementById('indoorDiscountCourts').addEventListener('change', calculateFees);
     document.getElementById('outdoorCourts').addEventListener('change', updateCourtRelatedDefaults);
-    document.getElementById('outdoorDiscountCourts').addEventListener('change', calculateFees); // 감면수는 직접 계산으로
+    document.getElementById('outdoorDiscountCourts').addEventListener('change', calculateFees);
 
     document.getElementById('totalPeople').addEventListener('change', calculateFees);
     document.getElementById('ballProviders').addEventListener('change', () => {
@@ -400,7 +542,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateBallProviderDefaults();
         calculateFees();
     });
-    // 공 개수 입력 필드 (setBallCount에서 이미 calculateFees 호출됨)
     document.getElementById('ballProvider1Balls').addEventListener('change', calculateFees);
     document.getElementById('ballProvider2Balls').addEventListener('change', calculateFees);
     document.getElementById('ballProvider3Balls').addEventListener('change', calculateFees);
@@ -411,12 +552,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.calculate-button').addEventListener('click', calculateFees);
 
 
-    // Kakao SDK 초기화 (요청하신 키 적용 완료!)
-    const KAKAO_JAVASCRIPT_KEY = '67cf828f37dca7dd4b1feef97f2ea7f1'; // 요청하신 키 적용 완료!
+    // Kakao SDK 초기화
+    const KAKAO_JAVASCRIPT_KEY = '67cf828f37dca7dd4b1feef97f2ea7f1'; // 요청하신 키 적용
     const kakaoShareButton = document.getElementById('kakaoShareButton');
     const infoMessage = document.getElementById('infoMessage');
 
-    if (KAKAO_JAVASCRIPT_KEY && KAKAO_JAVASCRIPT_KEY !== 'YOUR_JAVO_SCRIPT_KEY_HERE') { // 혹시나 'YOUR_JAVO_SCRIPT_KEY_HERE'가 남을 경우를 위한 안전장치
+    if (KAKAO_JAVASCRIPT_KEY && KAKAO_JAVASCRIPT_KEY !== 'YOUR_JAVO_SCRIPT_KEY_HERE') {
         Kakao.init(KAKAO_JAVASCRIPT_KEY);
         console.log("카카오 SDK 초기화됨:", Kakao.isInitialized());
         if (infoMessage) {
