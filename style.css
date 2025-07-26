@@ -1,316 +1,288 @@
-body {
-  font-family: 'Noto Sans KR', sans-serif;
-  margin: 0;
-  padding: 20px;
-  background-color: #E0F2F7; /* 밝은 스카이블루 - 산뜻하고 시원한 느낌 */
-  color: #333;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
+<style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #E0F2F7; /* 밝은 스카이블루 - 산뜻하고 시원한 느낌 */
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .container {
+      background-color: #FFFFFF;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 600px;
+      box-sizing: border-box;
+      position: relative; /* 자식 요소의 absolute 위치 지정을 위해 relative 설정 */
+      overflow: hidden;
+    }
+    .header-section {
+      display: flex;
+      justify-content: center; /* 제목을 가운데 정렬 */
+      align-items: center;
+      margin-bottom: 25px;
+      position: relative;
+      width: 100%; /* 제목이 가운데 정렬되도록 너비 설정 */
+    }
+    h1 {
+      color: #007BFF; /* 진한 파란색 - 테니스 코트 라인 색상 연상 */
+      margin: 0; /* 기본 마진 제거 */
+      font-size: 1.6em; /* 폰트 크기 살짝 더 줄임 */
+      font-weight: 700;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      text-align: center; /* 텍스트 가운데 정렬 */
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      max-width: 100%; /* 아이콘 제거 후 너비 조정 */
+      display: block; /* 아이콘과 같이 flex를 사용할 필요 없음 */
+    }
+    h2 {
+      text-align: center;
+      color: #28a745; /* 산뜻한 녹색 - 잔디 코트 연상 */
+      font-size: 1.6em;
+      border-bottom: 2px solid #D4EDDA;
+      padding-bottom: 10px;
+      margin-top: 30px;
+      font-weight: 700;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #555;
+    }
+    input[type="date"],
+    input[type="number"],
+    select {
+      width: calc(100% - 20px);
+      padding: 12px;
+      border: 1px solid #C0D8DF;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 1em;
+      background-color: #fdfdfd;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      font-family: 'Noto Sans KR', sans-serif; /* 드롭다운 폰트 적용 */
+      font-weight: bold; /* 드롭다운 폰트 굵게 */
+    }
+    input[type="date"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      border-color: #007BFF;
+      box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+      outline: none;
+    }
+    .calculate-button {
+      width: 100%;
+      padding: 15px;
+      background-color: #00A651; /* 선명한 녹색 - 테니스공 색상 */
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      margin-top: 20px;
+      box-shadow: 0 4px 10px rgba(0, 166, 81, 0.3);
+    }
+    .calculate-button:hover {
+      background-color: #008C45;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 166, 81, 0.4);
+    }
+    .result-box {
+      background-color: #F0FFF0;
+      border: 1px solid #CCEECC;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 30px;
+      color: #2E8B57;
+      line-height: 1.6;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+    .result-box h3 {
+      color: #28a745;
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 1.4em;
+    }
+    .result-box p {
+      margin-bottom: 8px;
+      font-size: 1.1em; /* 결과 텍스트 폰트 크기 키움 */
+      font-weight: 700; /* 폰트 굵기 조정 */
+      font-family: 'Noto Sans KR', sans-serif; /* 기본 폰트 유지하되 굵기 강조 */
+    }
+    .result-box strong {
+      color: #1E6C3A;
+    }
+    .error-message {
+      color: #dc3545;
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+    }
 
-.container {
-  background-color: #FFFFFF;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  width: 100%;
-  max-width: 600px;
-  box-sizing: border-box;
-  position: relative; /* 자식 요소의 absolute 위치 지정을 위해 relative 설정 */
-  overflow: hidden;
-}
+    /* 코트 선택 버튼 그룹 (반응형 - 모바일 환경에서 한 줄) */
+    .court-buttons {
+      display: flex; /* Flexbox 사용 */
+      flex-wrap: nowrap; /* 한 줄에 유지 */
+      justify-content: flex-start; /* 왼쪽 정렬 */
+      gap: 5px; /* 버튼 간격 */
+      margin-top: 10px;
+      margin-bottom: 10px;
+      overflow-x: auto; /* 내용이 넘치면 가로 스크롤 허용 */
+      -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
+      padding-bottom: 5px; /* 스크롤바가 보일 공간 확보 */
+    }
+    .court-buttons button {
+      flex-shrink: 0; /* 버튼이 줄어들지 않도록 */
+      padding: 12px 18px; /* 패딩을 늘려 버튼 크기 약 1.5배 키움 */
+      background-color: #6AABFF; /* 밝은 파란색 - 하늘색 */
+      color: white;
+      border-radius: 8px;
+      font-size: 1em; /* 폰트 크기 조정 */
+      white-space: nowrap; /* 텍스트가 줄바꿈되지 않도록 */
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-sizing: border-box; /* 패딩과 보더가 너비에 포함되도록 */
+      min-width: fit-content; /* 내용에 맞춰 최소 너비 설정 */
+    }
+    .court-buttons button:hover {
+      background-color: #4A90E2;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
 
-.header-section {
-  display: flex;
-  justify-content: center; /* 제목을 가운데 정렬 */
-  align-items: center;
-  margin-bottom: 25px;
-  position: relative;
-  width: 100%; /* 제목이 가운데 정렬되도록 너비 설정 */
-}
+    /* 총 인원 버튼 그룹 (고정 너비로 작게, 한 줄) */
+    .people-buttons {
+      display: flex;
+      flex-wrap: nowrap; /* 한 줄에 유지 */
+      justify-content: flex-start; /* 왼쪽 정렬 */
+      gap: 3px; /* 버튼 간격 살짝 더 줄임 */
+      margin-top: 10px;
+      margin-bottom: 10px;
+      overflow-x: auto; /* 한 줄에 다 안 들어갈 경우 스크롤 허용 */
+      -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
+      padding-bottom: 5px; /* 스크롤바 공간 확보 */
+    }
+    .people-buttons button {
+      flex-shrink: 0; /* 버튼이 줄어들지 않도록 설정 */
+      padding: 6px 7px; /* 패딩을 살짝 더 줄여서 작게 만듦 */
+      background-color: #6AABFF;
+      color: white;
+      border-radius: 8px;
+      font-size: 0.7em; /* 폰트 크기 약간 더 줄임 */
+      white-space: nowrap; /* 텍스트가 줄바꿈되지 않도록 */
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-sizing: border-box;
+      min-width: fit-content; /* 내용에 맞춰 최소 너비 설정 */
+    }
+    .people-buttons button:hover {
+      background-color: #4A90E2;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
 
-h1 {
-  color: #007BFF; /* 진한 파란색 - 테니스 코트 라인 색상 연상 */
-  margin: 0; /* 기본 마진 제거 */
-  font-size: 1.6em; /* 폰트 크기 살짝 더 줄임 */
-  font-weight: 700;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-  text-align: center; /* 텍스트 가운데 정렬 */
-  white-space: normal;
-  overflow: visible;
-  text-overflow: clip;
-  max-width: 100%; /* 아이콘 제거 후 너비 조정 */
-  display: block; /* 아이콘과 같이 flex를 사용할 필요 없음 */
-}
 
-h2 {
-  text-align: center;
-  color: #28a745; /* 산뜻한 녹색 - 잔디 코트 연상 */
-  font-size: 1.6em;
-  border-bottom: 2px solid #D4EDDA;
-  padding-bottom: 10px;
-  margin-top: 30px;
-  font-weight: 700;
-}
+    /* 랭킹보드 버튼 스타일 (기존 점수 기록 버튼 스타일 재활용) */
+    .ranking-board-button { /* 클래스명 변경 */
+        position: absolute; /* 절대 위치 */
+        top: 15px; /* 제목 위쪽 여백을 15px로 살짝 줄여서 제목과 버튼 간격을 조절 */
+        right: 20px; /* 우측 정렬 */
+        padding: 8px 12px; /* 패딩 유지 */
+        background-color: #FFC107; /* 노란색 - 테니스공 색상 */
+        color: #333; /* 텍스트 색상 변경 */
+        border: none;
+        border-radius: 8px;
+        font-size: 0.9em; /* 폰트 크기 유지 */
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        white-space: nowrap;
+        box-shadow: 0 2px 5px rgba(255, 193, 7, 0.4);
 
-.form-group {
-  margin-bottom: 18px;
-}
+        /* === 추가 및 변경된 속성 === */
+        z-index: 1000; /* 매우 높은 z-index로 다른 모든 요소 위에 오도록 강제 */
+        display: flex; /* 내부 텍스트를 중앙에 정렬하기 위해 flexbox 사용 */
+        align-items: center; /* 세로 중앙 정렬 */
+        justify-content: center; /* 가로 중앙 정렬 */
+        height: auto; /* 높이를 콘텐츠에 맞게 자동 조절 */
+        min-height: 38px; /* 최소 높이를 지정하여 클릭 가능한 영역 확보 (padding 고려) */
+        box-sizing: border-box; /* 패딩이 너비/높이에 포함되도록 */
+    }
+    .ranking-board-button:hover { /* 클래스명 변경 */
+        background-color: #E0A800;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(255, 193, 7, 0.5);
+    }
 
-label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: bold;
-  color: #555;
-}
+    /* 카카오톡 버튼 전용 스타일 - 웹 앱 자체에서는 숨김 처리 */
+    #kakaoShareButton {
+        display: none; /* 이 버튼은 외부 Netlify index.html에서 제어합니다. */
+        background-color: #ffeb00;
+        color: #3c1e1e;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+    #kakaoShareButton:hover {
+        background-color: #fada00;
+    }
 
-input[type="date"],
-input[type="number"],
-select {
-  width: calc(100% - 20px);
-  padding: 12px;
-  border: 1px solid #C0D8DF;
-  border-radius: 8px;
-  box-sizing: border-box;
-  font-size: 1em;
-  background-color: #fdfdfd;
-  transition: border-color 0.3s, box-shadow 0.3s;
-  font-family: 'Noto Sans KR', sans-serif; /* 드롭다운 폰트 적용 */
-  font-weight: bold; /* 드롭다운 폰트 굵게 */
-}
+    /* 로딩 메시지 스타일 */
+    #loadingMessage {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      color: #007BFF;
+      font-size: 1.2em;
+      animation: pulse 1.5s infinite alternate;
+    }
 
-input[type="date"]:focus,
-input[type="number"]:focus,
-select:focus {
-  border-color: #007BFF;
-  box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
-  outline: none;
-}
+    @keyframes pulse {
+      from { opacity: 0.7; }
+      to { opacity: 1; }
+    }
 
-.calculate-button {
-  width: 100%;
-  padding: 15px;
-  background-color: #00A651; /* 선명한 녹색 - 테니스공 색상 */
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.1em;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-  margin-top: 20px;
-  box-shadow: 0 4px 10px rgba(0, 166, 81, 0.3);
-}
+    /* 계산 결과 섹션 스타일 (원래대로 복구) */
+    .result-box h3#individualCostsTitle {
+        color: #007BFF; /* 진한 파란색 - 테니스 코트 라인 색상 연상 */
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.6em; /* 폰트 크기 조정 */
+        font-weight: 700;
+        border-bottom: 2px solid #D4EDDA;
+        padding-bottom: 10px;
+    }
 
-.calculate-button:hover {
-  background-color: #008C45;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 166, 81, 0.4);
-}
-
-.result-box {
-  background-color: #F0FFF0;
-  border: 1px solid #CCEECC;
-  border-radius: 10px;
-  padding: 20px;
-  margin-top: 30px;
-  color: #2E8B57;
-  line-height: 1.6;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-}
-
-.result-box h3 {
-  color: #28a745;
-  text-align: center;
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 1.4em;
-}
-
-.result-box p {
-  margin-bottom: 8px;
-  font-size: 1.1em; /* 결과 텍스트 폰트 크기 키움 */
-  font-weight: 700; /* 폰트 굵기 조정 */
-  font-family: 'Noto Sans KR', sans-serif; /* 기본 폰트 유지하되 굵기 강조 */
-}
-
-.result-box strong {
-  color: #1E6C3A;
-}
-
-.error-message {
-  color: #dc3545;
-  text-align: center;
-  margin-top: 20px;
-  font-weight: bold;
-}
-
-/* 코트 선택 버튼 그룹 (반응형 - 모바일 환경에서 한 줄) */
-.court-buttons {
-  display: flex; /* Flexbox 사용 */
-  flex-wrap: nowrap; /* 한 줄에 유지 */
-  justify-content: flex-start; /* 왼쪽 정렬 */
-  gap: 5px; /* 버튼 간격 */
-  margin-top: 10px;
-  margin-bottom: 10px;
-  overflow-x: auto; /* 내용이 넘치면 가로 스크롤 허용 */
-  -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
-  padding-bottom: 5px; /* 스크롤바가 보일 공간 확보 */
-}
-
-.court-buttons button {
-  flex-shrink: 0; /* 버튼이 줄어들지 않도록 */
-  padding: 12px 18px; /* 패딩을 늘려 버튼 크기 약 1.5배 키움 */
-  background-color: #6AABFF; /* 밝은 파란색 - 하늘색 */
-  color: white;
-  border-radius: 8px;
-  font-size: 1em; /* 폰트 크기 조정 */
-  white-space: nowrap; /* 텍스트가 줄바꿈되지 않도록 */
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  box-sizing: border-box; /* 패딩과 보더가 너비에 포함되도록 */
-  min-width: fit-content; /* 내용에 맞춰 최소 너비 설정 */
-}
-
-.court-buttons button:hover {
-  background-color: #4A90E2;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-}
-
-/* 총 인원 버튼 그룹 (고정 너비로 작게, 한 줄) */
-.people-buttons {
-  display: flex;
-  flex-wrap: nowrap; /* 한 줄에 유지 */
-  justify-content: flex-start; /* 왼쪽 정렬 */
-  gap: 3px; /* 버튼 간격 살짝 더 줄임 */
-  margin-top: 10px;
-  margin-bottom: 10px;
-  overflow-x: auto; /* 한 줄에 다 안 들어갈 경우 스크롤 허용 */
-  -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
-  padding-bottom: 5px; /* 스크롤바 공간 확보 */
-}
-
-.people-buttons button {
-  flex-shrink: 0; /* 버튼이 줄어들지 않도록 설정 */
-  padding: 6px 7px; /* 패딩을 살짝 더 줄여서 작게 만듦 */
-  background-color: #6AABFF;
-  color: white;
-  border-radius: 8px;
-  font-size: 0.7em; /* 폰트 크기 약간 더 줄임 */
-  white-space: nowrap; /* 텍스트가 줄바꿈되지 않도록 */
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  box-sizing: border-box;
-  min-width: fit-content; /* 내용에 맞춰 최소 너비 설정 */
-}
-
-.people-buttons button:hover {
-  background-color: #4A90E2;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-}
-
-/* 랭킹보드 버튼 스타일 (기존 점수 기록 버튼 스타일 재활용) */
-.ranking-board-button { /* 클래스명 변경 */
-    position: absolute; /* 절대 위치 */
-    top: 15px; /* 제목 위쪽 여백을 15px로 살짝 줄여서 제목과 버튼 간격을 조절 */
-    right: 20px; /* 우측 정렬 */
-    padding: 8px 12px; /* 패딩 유지 */
-    background-color: #FFC107; /* 노란색 - 테니스공 색상 */
-    color: #333; /* 텍스트 색상 변경 */
-    border: none;
-    border-radius: 8px;
-    font-size: 0.9em; /* 폰트 크기 유지 */
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    white-space: nowrap;
-    box-shadow: 0 2px 5px rgba(255, 193, 7, 0.4);
-
-    /* === 추가 및 변경된 속성 === */
-    z-index: 1000; /* 매우 높은 z-index로 다른 모든 요소 위에 오도록 강제 */
-    display: flex; /* 내부 텍스트를 중앙에 정렬하기 위해 flexbox 사용 */
-    align-items: center; /* 세로 중앙 정렬 */
-    justify-content: center; /* 가로 중앙 정렬 */
-    height: auto; /* 높이를 콘텐츠에 맞게 자동 조절 */
-    min-height: 38px; /* 최소 높이를 지정하여 클릭 가능한 영역 확보 (padding 고려) */
-    box-sizing: border-box; /* 패딩이 너비/높이에 포함되도록 */
-}
-
-.ranking-board-button:hover { /* 클래스명 변경 */
-    background-color: #E0A800;
-    transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(255, 193, 7, 0.5);
-}
-
-/* 카카오톡 버튼 전용 스타일 */
-#kakaoShareButton {
-    width: 100%;
-    padding: 15px;
-    background-color: #ffeb00;
-    color: #3c1e1e;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    margin-top: 20px;
-    box-shadow: 0 4px 10px rgba(255, 235, 0, 0.3);
-}
-
-#kakaoShareButton:hover {
-    background-color: #fada00;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(255, 235, 0, 0.4);
-}
-
-/* 로딩 메시지 스타일 */
-#loadingMessage {
-  display: none;
-  text-align: center;
-  margin-top: 20px;
-  font-weight: bold;
-  color: #007BFF;
-  font-size: 1.2em;
-  animation: pulse 1.5s infinite alternate;
-}
-
-@keyframes pulse {
-  from { opacity: 0.7; }
-  to { opacity: 1; }
-}
-
-/* 계산 결과 섹션 스타일 (원래대로 복구) */
-.result-box h3#individualCostsTitle {
-    color: #007BFF; /* 진한 파란색 - 테니스 코트 라인 색상 연상 */
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 1.6em; /* 폰트 크기 조정 */
-    font-weight: 700;
-    border-bottom: 2px solid #D4EDDA;
-    padding-bottom: 10px;
-}
-
-/* 기존 "1인당 비용 정산"을 이제 일반 참가자 송금액으로만 사용 */
-#individualCosts span { /* p 대신 span으로 변경하여 같은 줄에 나오도록 */
-  margin-bottom: 8px;
-  font-size: 1.1em; /* 폰트 크기 유지 */
-  font-weight: 700;
-  display: block; /* 각 항목이 블록으로 표시되도록 (기존 줄바꿈 유지) */
-}
-
-/* 특정 항목에 대해서만 줄바꿈 제거 */
-#individualCosts span.inline-item {
-    display: inline; /* 같은 줄에 나오도록 */
-    margin-right: 10px; /* 항목 간 간격 */
-}
+    /* 기존 "1인당 비용 정산"을 이제 일반 참가자 송금액으로만 사용 */
+    #individualCosts span { /* p 대신 span으로 변경하여 같은 줄에 나오도록 */
+      margin-bottom: 8px;
+      font-size: 1.1em; /* 폰트 크기 유지 */
+      font-weight: 700;
+      display: block; /* 각 항목이 블록으로 표시되도록 (기존 줄바꿈 유지) */
+    }
+    /* 특정 항목에 대해서만 줄바꿈 제거 */
+    #individualCosts span.inline-item {
+        display: inline; /* 같은 줄에 나오도록 */
+        margin-right: 10px; /* 항목 간 간격 */
+    }
+  </style>
