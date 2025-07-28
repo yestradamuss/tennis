@@ -3,233 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>테니스 코트 비용 계산기</title>
+    <title>코트비 계산기</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-    <style>
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #E0F2F7; /* 밝은 스카이블루 - 산뜻하고 시원한 느낌 */
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-        .container {
-            background-color: #FFFFFF;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            width: 100%;
-            max-width: 600px;
-            box-sizing: border-box;
-            position: relative;
-            overflow: hidden;
-        }
-        .header-section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 25px;
-            position: relative;
-            width: 100%;
-        }
-        h1 {
-            color: #007BFF;
-            margin: 0;
-            font-size: 2em;
-            font-weight: 700;
-        }
-        .ranking-board-button {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: #FFC107;
-            color: #FFFFFF;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 15px;
-            font-size: 0.9em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 38px;
-            box-sizing: border-box;
-        }
-        .ranking-board-button:hover {
-            background-color: #E0A800;
-            transform: translateY(-1px);
-            box-shadow: 0 3px 8px rgba(255, 193, 7, 0.5);
-        }
-        /* iframe 스타일 추가 */
-        .calculator-frame-container {
-            width: 100%;
-            /* 스크롤바가 생기지 않도록 충분한 높이 확보 */
-            height: 900px; /* 기존 700px에서 900px로 늘림 */
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            overflow: hidden; /* iframe 스크롤바가 생기지 않도록 숨김 */
-            margin-bottom: 20px;
-        }
-        .calculator-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        /* 카카오톡 공유 버튼 스타일 */
-        #kakaoShareButton {
-            display: none; /* JavaScript에서 display: flex로 제어 */
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 15px 20px;
-            background-color: #ffeb00;
-            color: #3c1e1e;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 10px;
-        }
-        #kakaoShareButton:hover {
-            background-color: #fada00;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(255, 235, 0, 0.3);
-        }
-        #kakaoShareButton img {
-            height: 24px;
-            margin-right: 8px;
-        }
-        .message {
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: bold;
-        }
-        .info-message {
-            color: #007BFF;
-            background-color: #CCE5FF;
-            border: 1px solid #B8DAFF;
-        }
-        .error-message {
-            color: #DC3545;
-            background-color: #F8D7DA;
-            border: 1px solid #F5C6CB;
-        }
-        /* 기존 스타일들도 유지 */
-        /* ... (이전 style.css 내용이 여기에 포함되어야 합니다) ... */
-    </style>
+    <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <header class="header-section">
-            <h1>코트 예약 요금 계산기</h1>
-            <a href="https://script.google.com/macros/s/AKfycbzK0WSHt8v7Fep25FSKPyEpww3XYIqRMmr54Op1oEIYqjAwLSiucyasz2xo8bbgHCgHnQ/exec" target="_blank" id="rankingBoardButton" class="ranking-board-button">랭킹보드</a>
-        </header>
+        <h1>코트비 계산기</h1>
 
-        <div class="calculator-frame-container">
-            <iframe id="calculatorIframe" class="calculator-iframe" src="https://script.google.com/macros/s/AKfycbzlfCMLKGzn0UpyMZJuwuTgZBlAaUrr5dItAHDHYxxxngt0uHUsddal9l54SK0JU-Qf/exec" title="테니스 코트 계산기"></iframe>
+        <div class="input-section">
+            <div class="input-group">
+                <label for="courtType">코트 종류:</label>
+                <select id="courtType">
+                    <option value="outdoor">실외</option>
+                    <option value="indoor">실내</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="usageDate">사용 날짜:</label>
+                <input type="date" id="usageDate">
+            </div>
+
+            <div class="input-group">
+                <label for="usageTime">사용 시간:</label>
+                <select id="usageTime">
+                    </select>
+            </div>
+
+            <div class="input-group">
+                <label for="courtCount">총 코트 수:</label>
+                <select id="courtCount">
+                    <option value="1">1개</option>
+                    <option value="2">2개</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="discountedCourtCount">감면 코트 수 (50% 할인):</label>
+                <input type="number" id="discountedCourtCount" value="0" min="0">
+            </div>
+
+            <div class="input-group">
+                <label for="totalParticipants">총 인원수:</label>
+                <input type="number" id="totalParticipants" value="1" min="1">
+            </div>
+
+            <div class="input-group">
+                <label for="ballCount">공 개수 (제공자 수로 간주):</label>
+                <input type="number" id="ballCount" value="0" min="0">
+            </div>
+
+            <button id="calculateBtn">계산하기</button>
         </div>
 
-        <div id="infoMessage" class="message info-message" style="display: none;"></div>
-        <div id="errorMessage" class="message error-message" style="display: none;"></div>
-
-        <button id="kakaoShareButton">
-            <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" alt="카카오톡 아이콘">
-            카톡으로 공유하기
-        </button>
+        <div class="result-section">
+            <h2>계산 결과</h2>
+            <div id="results">
+                <p>🎾 <strong>총 코트 대여료:</strong> <span id="totalCourtRentalDisplayFee">0원</span></p>
+                <p>🥎 <strong>총 테니스 비용 (공 포함):</strong> <span id="totalTennisCost">0원</span></p>
+                <p>💰 <strong>1. 일반 참가자 송금액:</strong> <span id="regularParticipantAmount">0원</span></p>
+                <div id="ballProviderSettlement">
+                    </div>
+                <p>🌟 <strong>코트 대여 임무:</strong> <span id="courtManager">정보 없음</span></p>
+            </div>
+            <button id="shareKakao">카카오톡 공유</button>
+        </div>
     </div>
 
-    <script>
-        // 이 부분은 script.js 파일의 내용이므로 여기에 직접 넣지 않습니다.
-        // script.js 파일은 별도로 관리하는 것이 좋습니다.
-        // 다만, 카카오톡 버튼 표시 로직은 여기서 직접 제어할 수 있습니다.
-        // 여기서는 script.js가 로드된 후 메시지를 받는 방식으로만 처리합니다.
-
-        // iframe으로부터 메시지 수신 (계산 결과 받기)
-        window.addEventListener('message', (event) => {
-            // Netlify 앱의 도메인이 Netlify에 배포되면 달라질 수 있으니,
-            // Google Apps Script에서 postMessage 시 정확한 도메인을 사용해야 합니다.
-            // 여기서는 iframe으로부터 오는 메시지이므로, origin 확인이 중요합니다.
-            const expectedOrigin = "https://script.google.com"; // Google Apps Script의 origin
-            if (event.origin !== expectedOrigin) {
-                console.warn(`수신된 메시지의 Origin이 다릅니다: ${event.origin} (예상: ${expectedOrigin})`);
-                return;
-            }
-
-            const data = event.data;
-            const infoMessageElement = document.getElementById('infoMessage');
-            const errorMessageElement = document.getElementById('errorMessage');
-            const kakaoShareButton = document.getElementById('kakaoShareButton');
-
-            if (data.type === 'calculationResult') {
-                // 결과 표시 (필요시 infoMessage 등을 사용)
-                console.log("계산 결과 수신:", data);
-                if (infoMessageElement) infoMessageElement.style.display = 'none';
-                if (errorMessageElement) errorMessageElement.style.display = 'none';
-
-                // 카카오톡 공유 버튼 활성화 (메시지를 받으면 보이도록)
-                if (kakaoShareButton) {
-                    kakaoShareButton.style.display = 'flex'; // 카카오톡 버튼 보이게 변경
-                    kakaoShareButton.onclick = function() {
-                        // script.js에 정의된 shareKakao 함수를 호출
-                        // iframe 내부의 함수를 직접 호출하는 것은 보안상 권장되지 않으며,
-                        // postMessage를 통해 데이터를 전달하고 iframe 내부에서 공유 로직을 실행하는 것이 좋습니다.
-                        // 하지만 현재는 iframe 외부에서 공유 기능을 직접 실행해야 하므로,
-                        // iframe에서 받은 데이터를 사용하여 공유 메시지를 구성해야 합니다.
-                        // (이 부분은 script.js에서 처리하므로 여기서 별도 함수를 호출하지 않습니다.)
-                    };
-                }
-
-            } else if (data.type === 'errorMessage') {
-                console.error("오류 메시지 수신:", data.message);
-                if (errorMessageElement) {
-                    errorMessageElement.textContent = data.message;
-                    errorMessageElement.style.display = 'block';
-                }
-                if (infoMessageElement) infoMessageElement.style.display = 'none';
-                if (kakaoShareButton) kakaoShareButton.style.display = 'none'; // 오류 시 버튼 숨김
-            }
-        });
-
-        // 랭킹보드 URL 로드 함수 (이전 Code.gs에서 가져오는 방식 그대로)
-        function loadRankingBoardUrl() {
-            const rankingBoardButton = document.getElementById('rankingBoardButton');
-            rankingBoardButton.style.display = 'none'; // 기본적으로 숨김
-
-            google.script.run
-                .withSuccessHandler(function(url) {
-                    if (url) { // URL이 유효할 경우
-                        rankingBoardButton.style.display = 'block'; // 버튼 보이기
-                        rankingBoardButton.onclick = function() {
-                            window.open(url, '_blank'); // 새 탭에서 URL 열기
-                        };
-                    } else { // URL이 없거나 유효하지 않을 경우 (Code.gs에서 null 반환 시)
-                        rankingBoardButton.style.display = 'none'; // 버튼 숨김
-                        console.warn("랭킹보드 웹앱 주소를 불러올 수 없거나 유효하지 않습니다. 버튼을 숨깁니다.");
-                    }
-                })
-                .withFailureHandler(function(error) {
-                    console.error("랭킹보드 웹앱 주소를 불러오는 중 오류 발생:", error.message);
-                    rankingBoardButton.style.display = 'none'; // 오류 시 버튼 숨김
-                })
-                .getScoreTrackerAppUrl(); // Code.gs의 함수 호출 (이 함수가 이제 랭킹보드 URL을 가져옴)
-        }
-
-        // 페이지 로드 시 랭킹보드 URL을 로드하도록 호출
-        document.addEventListener('DOMContentLoaded', loadRankingBoardUrl);
-    </script>
-    <script src="script.js"></script> </body>
+    <script src="script.js"></script>
+</body>
 </html>
