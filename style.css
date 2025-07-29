@@ -1,263 +1,277 @@
-/* Google Fonts - Noto Sans KR 임포트 */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
-
 body {
     font-family: 'Noto Sans KR', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Noto Sans KR 우선 적용 */
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: flex-start; /* 상단 정렬 */
     min-height: 100vh;
     margin: 0;
-    background-color: #f4f7f6;
-    color: #333;
+    background-color: #f0f2f5; /* 더 부드러운 배경색 */
+    color: #2c3e50; /* 기본 글자색 진하게 */
     padding: 20px;
-    box-sizing: border-box;
-    font-weight: 400; /* 기본 폰트 굵기 설정 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+    font-weight: 400; /* 기본 폰트 굵기 조정 */
 }
 
 .container {
     background-color: #ffffff;
     padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 12px; /* 모서리 더 둥글게 */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* 그림자 더 선명하게 */
     width: 100%;
-    max-width: 600px;
+    max-width: 550px; /* 최대 너비 약간 넓힘 */
+    box-sizing: border-box;
 }
 
 h1 {
     text-align: center;
     color: #2c3e50;
-    margin-bottom: 25px;
-    font-size: 2em; /* h1 폰트 크기 증가 */
-    font-weight: 700; /* h1 폰트 굵게 */
+    margin-bottom: 30px;
+    font-size: 2em; /* 제목 크기 키움 */
+    font-weight: 700; /* 제목 더 진하게 */
 }
 
 h2 {
-    color: #2c3e50;
-    margin-bottom: 15px;
-    font-size: 1.6em; /* h2 폰트 크기 증가 */
-    font-weight: 600; /* h2 폰트 굵게 */
+    color: #34495e;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.6em;
+    font-weight: 600;
+    border-bottom: 2px solid #ecf0f1; /* 섹션 제목 밑줄 추가 */
+    padding-bottom: 10px;
 }
 
 .input-section, .result-section {
     margin-bottom: 30px;
-    padding: 20px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #fcfcfc;
+    padding: 25px;
+    border: 1px solid #e0e6ea; /* 테두리 색상 조정 */
+    border-radius: 10px;
+    background-color: #fdfefe; /* 섹션 배경색 미세 조정 */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* 내부 그림자 추가 */
 }
 
 .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 18px; /* 간격 조정 */
     display: flex;
     flex-direction: column;
 }
 
 .input-group label {
     margin-bottom: 8px;
-    font-weight: 500; /* 레이블 폰트 굵기 조정 */
-    color: #444; /* 레이블 색상 약간 진하게 */
-    font-size: 1em;
+    font-weight: 500; /* 레이블 굵기 조정 */
+    color: #34495e; /* 레이블 색상 조정 */
+    font-size: 1em; /* 레이블 크기 */
 }
 
-.input-group input:not([type="checkbox"]),
+.input-group input[type="date"],
+.input-group input[type="number"],
 .input-group select {
     width: 100%;
-    padding: 10px;
+    padding: 12px; /* 패딩 증가 */
+    border: 1px solid #bdc3c7; /* 테두리 색상 조정 */
+    border-radius: 6px; /* 모서리 둥글게 */
+    font-size: 1.05em; /* 폰트 크기 약간 키움 */
+    box-sizing: border-box;
+    appearance: none; /* 기본 select/input 스타일 제거 (커스터마이징 용이) */
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
+.input-group select {
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2334495e%22%20d%3D%22M287%2C197.399L159.5%2C69.899c-4.6-4.6-12-4.6-16.6,0L5.3,197.399c-4.6,4.6-4.6,12,0,16.6l14.8,14.8c4.6,4.6,12,4.6,16.6,0l113.8-113.7l113.8,113.7c4.6,4.6,12,4.6,16.6,0l14.8-14.8C291.6,209.399,291.6,201.999,287,197.399z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: 12px auto;
+    padding-right: 30px; /* 화살표 겹치지 않도록 패딩 추가 */
+}
+
+.input-group input[type="date"] {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-date" viewBox="0 0 16 16"><path d="M6.44 10.635a.5.5 0 0 1 .637-.024l2.062 1.375a.5.5 0 0 1-.362.848H6.84a.5.5 0 0 1-.362-.848l2.062-1.375a.5.5 0 0 1-.024-.637z"/><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px auto;
+    padding-right: 40px;
+}
+
+
+/* 버튼 그룹 스타일 */
+.button-row {
+    display: flex;
+    flex-wrap: wrap; /* 버튼이 넘치면 다음 줄로 */
+    gap: 8px; /* 버튼 사이 간격 */
+    margin-top: 10px;
+}
+
+.button-row button {
+    flex-grow: 1; /* 버튼이 공간을 채우도록 */
+    min-width: 60px; /* 최소 너비 */
+    padding: 8px 12px;
+    background-color: #ecf0f1; /* 회색 배경 */
+    color: #34495e; /* 진한 글자색 */
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-size: 1em;
-    box-sizing: border-box;
-    font-family: 'Noto Sans KR', sans-serif; /* 입력 필드도 Noto Sans KR 적용 */
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 0; /* 기본 버튼 마진 덮어쓰기 */
 }
 
-.input-group input#usageDate {
-    width: calc(100% - 20px);
+.button-row button:hover {
+    background-color: #dfe6e9;
+    border-color: #aeb6bf;
 }
 
-/* 아래 특정 input 필드에 대한 width는 이전 요청에 맞춰 유지 */
-/* .input-group input#discountedCourtCount { width: 80px; } */
-/* .input-group input#totalParticipants, .input-group input#ballCount { width: 60px; } */
-
-.input-group input#discountApplied {
-    margin-top: 5px;
-    transform: scale(1.2);
+.button-row button[data-value][data-target]:hover { /* 버튼에 데이터 속성이 있는 경우만 hover */
+    background-color: #cce7ff; /* 호버 시 파란색 계열 */
+    border-color: #92c1ec;
+    color: #2980b9;
 }
+
 
 button {
     display: block;
     width: 100%;
-    padding: 12px;
-    background-color: #3498db;
+    padding: 14px; /* 버튼 패딩 증가 */
+    background-color: #3498db; /* 메인 버튼 색상 */
     color: white;
     border: none;
-    border-radius: 5px;
-    font-size: 1.1em;
-    font-weight: 500; /* 버튼 텍스트 굵기 조정 */
+    border-radius: 8px; /* 버튼 모서리 둥글게 */
+    font-size: 1.2em; /* 버튼 폰트 크기 키움 */
+    font-weight: 600; /* 버튼 폰트 굵게 */
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 20px;
-    box-sizing: border-box;
-    font-family: 'Noto Sans KR', sans-serif; /* 버튼 텍스트도 Noto Sans KR 적용 */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 25px; /* 버튼 상단 마진 */
 }
 
 button:hover {
     background-color: #2980b9;
+    transform: translateY(-2px); /* 호버 시 살짝 떠오르는 효과 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 #calculateBtn {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .result-section h2 {
     text-align: center;
     color: #2c3e50;
     margin-bottom: 20px;
-    font-size: 1.5em;
+    font-size: 1.8em;
+    font-weight: 700;
 }
 
 #results p {
     background-color: #eaf6fd;
-    padding: 10px 15px;
-    border-left: 5px solid #3498db;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    font-size: 1.05em;
-    line-height: 1.5;
+    padding: 12px 18px; /* 패딩 조정 */
+    border-left: 6px solid #3498db; /* 테두리 두께 */
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-size: 1.1em; /* 폰트 크기 조정 */
+    line-height: 1.6;
+    display: flex; /* 아이콘과 텍스트 정렬 */
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* 결과 항목 그림자 */
 }
 
 #results p strong {
     color: #2c3e50;
-    font-weight: 700; /* 결과 레이블 더 굵게 */
+    font-weight: 600; /* 결과 항목 글자 굵게 */
+    margin-right: 8px; /* 아이콘과 텍스트 사이 간격 */
 }
 
-#totalCourtRentalDisplayFee,
-#totalTennisCost,
-#regularParticipantAmount,
-#courtManager {
-    font-weight: 500; /* 결과 값도 약간 굵게 */
-    color: #000; /* 결과 값 색상 진하게 */
+#ballProviderSettlement {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px dashed #ccc; /* 구분선 추가 */
 }
-
 
 #ballProviderSettlement p {
-    background-color: #f7f7f7;
+    background-color: #f7f9fb; /* 공 제공자 부분은 배경색을 다르게 */
+    border-left: 6px solid #95a5a6; /* 테두리 색상도 다르게 */
+    font-size: 1.05em;
+    margin-bottom: 8px;
     padding: 10px 15px;
-    border-left: 5px solid #95a5a6;
-    margin-bottom: 8px; /* 공 제공자 항목 간 간격 조정 */
 }
+
+#ballProviderSettlement p:first-child {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+#ballProviderSettlement p:last-child {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
 #ballProviderSettlement p strong {
-    font-weight: 600; /* 공 제공자 제목 굵기 조정 */
+    font-weight: 600;
+    color: #4a6272;
 }
 
-
-.ball-provider-info {
-    margin-left: 20px;
-    padding-left: 15px;
-    border-left: 2px solid #e0e0e0; /* 구분선 색상 조정 */
-    margin-bottom: 10px;
+#ballProviderSettlement p.diligent-person { /* 부지런한사람 전용 스타일 */
+    background-color: #e6ffee; /* 연한 녹색 배경 */
+    border-left-color: #2ecc71; /* 녹색 테두리 */
+    margin-left: 20px; /* 들여쓰기 */
+    font-weight: 500;
+    color: #27ae60;
+    font-size: 1em;
 }
 
-.ball-provider-info label {
-    font-style: normal; /* 이탤릭 제거 */
-    font-weight: 400; /* 폰트 굵기 일반으로 */
-    color: #666; /* 색상 조정 */
-}
-
-/* 드롭다운 옆 버튼 스타일 */
-.button-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-top: 8px;
-}
-
-.button-row button {
-    width: auto;
-    padding: 8px 12px;
-    font-size: 0.9em;
-    margin-top: 0;
-    border: 1px solid #bbb; /* 테두리 색상 조정 */
-    background-color: #f0f0f0; /* 배경색 조정 */
-    color: #333;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-    font-weight: 400; /* 버튼 텍스트 굵기 일반으로 */
-}
-
-.button-row button:hover {
-    background-color: #e0e0e0;
-    border-color: #999;
-}
 
 #shareKakao {
-    background-color: #FEE500;
-    color: #3C1E1E;
-    margin-top: 20px;
+    background-color: #FEE500; /* 카카오 노란색 */
+    color: #3C1E1E; /* 카카오 텍스트 색상 */
+    margin-top: 30px;
+    box-shadow: 0 4px 10px rgba(254, 229, 0, 0.4);
 }
 
 #shareKakao:hover {
-    background-color: #fada00;
+    background-color: #fada00; /* 호버 시 약간 어두워짐 */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(254, 229, 0, 0.5);
 }
 
 /* 반응형 디자인 */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
     .container {
-        padding: 20px;
+        padding: 15px;
     }
 
     h1 {
-        font-size: 1.6em;
+        font-size: 1.7em;
     }
 
     h2 {
-        font-size: 1.3em;
-    }
-
-    .input-group {
-        margin-bottom: 12px;
-    }
-
-    .input-group label {
-        font-size: 0.9em;
-    }
-
-    .input-group input:not([type="checkbox"]),
-    .input-group select {
-        padding: 8px;
-        font-size: 0.9em;
-    }
-
-    button {
-        padding: 10px;
-        font-size: 1em;
-        margin-top: 15px;
-    }
-
-    #results p {
-        font-size: 0.95em;
-        padding: 8px 12px;
-        margin-bottom: 8px;
-    }
-
-    .button-row button {
-        font-size: 0.85em;
-        padding: 6px 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    h1 {
         font-size: 1.4em;
     }
 
-    h2 {
-        font-size: 1.2em;
+    button {
+        padding: 12px;
+        font-size: 1.1em;
+    }
+
+    .input-group label {
+        font-size: 0.95em;
+    }
+
+    .input-group input,
+    .input-group select {
+        font-size: 0.95em;
+    }
+
+    .result-section p {
+        font-size: 1em;
     }
 
     .button-row button {
-        font-size: 0.8em;
-        padding: 5px 8px;
+        flex-basis: calc(33.33% - 8px); /* 3개씩 한 줄에 */
+        max-width: calc(33.33% - 8px);
+        font-size: 0.85em;
+    }
+}
+
+@media (max-width: 400px) {
+    .button-row button {
+        flex-basis: calc(50% - 8px); /* 2개씩 한 줄에 */
+        max-width: calc(50% - 8px);
     }
 }

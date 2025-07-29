@@ -3,29 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>코트비 계산기</title>
+    <title>테니스 코트비 계산기</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>코트비 계산기</h1>
+        <h1>테니스 코트비 계산기</h1>
 
         <div class="input-section">
-            <h2>날짜 및 시간</h2>
             <div class="input-group">
                 <label for="usageDate">날짜:</label>
                 <input type="date" id="usageDate">
             </div>
+
             <div class="input-group">
                 <label for="startTime">시작 시간:</label>
-                <select id="startTime">
-                    </select>
+                <select id="startTime"></select>
             </div>
+
             <div class="input-group">
                 <label for="endTime">종료 시간:</label>
-                <select id="endTime">
-                    </select>
+                <select id="endTime"></select>
             </div>
         </div>
 
@@ -48,23 +50,17 @@
                     <button type="button" data-target="indoorCourtCount" data-value="4">4개</button>
                 </div>
             </div>
+
             <div class="input-group">
-                <label for="indoorDiscountedCourtCount">실내 코트 감면 대상 수:</label>
+                <label for="indoorDiscountedCourtCount">실내 코트 감면 대상 수 (50% 할인):</label>
                 <select id="indoorDiscountedCourtCount">
                     <option value="0">0개</option>
-                    <option value="1">1개</option>
-                    <option value="2">2개</option>
-                    <option value="3">3개</option>
-                    <option value="4">4개</option>
                 </select>
                 <div class="button-row">
                     <button type="button" data-target="indoorDiscountedCourtCount" data-value="0">0개</button>
-                    <button type="button" data-target="indoorDiscountedCourtCount" data-value="1">1개</button>
-                    <button type="button" data-target="indoorDiscountedCourtCount" data-value="2">2개</button>
-                    <button type="button" data-target="indoorDiscountedCourtCount" data-value="3">3개</button>
-                    <button type="button" data-target="indoorDiscountedCourtCount" data-value="4">4개</button>
                 </div>
             </div>
+
             <div class="input-group">
                 <label for="outdoorCourtCount">실외 코트 대여 수:</label>
                 <select id="outdoorCourtCount">
@@ -82,21 +78,14 @@
                     <button type="button" data-target="outdoorCourtCount" data-value="4">4개</button>
                 </div>
             </div>
+
             <div class="input-group">
-                <label for="outdoorDiscountedCourtCount">실외 코트 감면 대상 수:</label>
+                <label for="outdoorDiscountedCourtCount">실외 코트 감면 대상 수 (50% 할인):</label>
                 <select id="outdoorDiscountedCourtCount">
                     <option value="0">0개</option>
-                    <option value="1">1개</option>
-                    <option value="2">2개</option>
-                    <option value="3">3개</option>
-                    <option value="4">4개</option>
                 </select>
                 <div class="button-row">
                     <button type="button" data-target="outdoorDiscountedCourtCount" data-value="0">0개</button>
-                    <button type="button" data-target="outdoorDiscountedCourtCount" data-value="1">1개</button>
-                    <button type="button" data-target="outdoorDiscountedCourtCount" data-value="2">2개</button>
-                    <button type="button" data-target="outdoorDiscountedCourtCount" data-value="3">3개</button>
-                    <button type="button" data-target="outdoorDiscountedCourtCount" data-value="4">4개</button>
                 </div>
             </div>
         </div>
@@ -104,7 +93,7 @@
         <div class="input-section">
             <h2>인원 정보</h2>
             <div class="input-group">
-                <label for="totalParticipants">총 인원:</label>
+                <label for="totalParticipants">총 인원수:</label>
                 <select id="totalParticipants">
                     <option value="4">4명</option>
                     <option value="5">5명</option>
@@ -132,11 +121,12 @@
                     <button type="button" data-target="totalParticipants" data-value="12">12명</button>
                 </div>
             </div>
+
             <div class="input-group">
                 <label for="ballProviderCount">테니스공 제공자 수:</label>
                 <select id="ballProviderCount">
                     <option value="0">0명</option>
-                    <option value="1">1명</option>
+                    <option value="1" selected>1명</option>
                     <option value="2">2명</option>
                     <option value="3">3명</option>
                     <option value="4">4명</option>
@@ -149,11 +139,12 @@
                     <button type="button" data-target="ballProviderCount" data-value="4">4명</button>
                 </div>
             </div>
+            
             <div id="ballProviders">
                 </div>
-        </div>
 
-        <button id="calculateBtn">요금 계산</button>
+            <button id="calculateBtn">계산하기</button>
+        </div>
 
         <div class="result-section">
             <h2>계산 결과</h2>
@@ -163,7 +154,7 @@
                 <p>💰 <strong>1. 일반 참가자 송금액:</strong> <span id="regularParticipantAmount">0원</span></p>
                 <div id="ballProviderSettlement">
                     </div>
-                <p id="courtManagerResult">🌟 <strong>코트 대여 임무:</strong> <span id="courtManager">정보 없음</span></p>
+                <p id="courtManagerResult" style="display:none;">🌟 <strong>코트 대여 임무:</strong> <span id="courtManager">정보 없음</span></p>
             </div>
             <button id="shareKakao">카카오톡 공유</button>
         </div>
