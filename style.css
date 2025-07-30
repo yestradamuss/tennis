@@ -1,165 +1,329 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>테니스 코트비 계산기</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
-</head>
-<body>
-    <div class="container">
-        <h1>테니스 코트비 계산기</h1>
+.participants-section .button-group {
+    display: flex;
+    gap: 4px;
+    margin-top: 10px;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
 
-        <div class="input-section">
-            <div class="input-group">
-                <label for="usageDate">날짜:</label>
-                <input type="date" id="usageDate">
-            </div>
+.participants-section .quick-btn {
+    flex: 1;
+    min-width: 30px;
+    padding: 6px 8px;
+    font-size: 0.85em;
+    font-weight: 600;
+}/* 구글 폰트 적용 및 전체 기본 스타일 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-            <div class="input-group">
-                <label for="startTime">시작 시간:</label>
-                <select id="startTime"></select>
-            </div>
+body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    font-weight: 500;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #2c3e50;
+    padding: 20px;
+    line-height: 1.6;
+}
 
-            <div class="input-group">
-                <label for="endTime">종료 시간:</label>
-                <select id="endTime"></select>
-            </div>
-        </div>
+.container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 500px;
+    backdrop-filter: blur(10px);
+}
 
-        <div class="input-section">
-            <h2>코트 대여 정보</h2>
-            <div class="input-group">
-                <label for="indoorCourtCount">실내 코트 대여 수:</label>
-                <select id="indoorCourtCount">
-                    <option value="0">0개</option>
-                    <option value="1">1개</option>
-                    <option value="2">2개</option>
-                    <option value="3">3개</option>
-                    <option value="4">4개</option>
-                </select>
-                <div class="button-row">
-                    <button type="button" data-target="indoorCourtCount" data-value="0">0개</button>
-                    <button type="button" data-target="indoorCourtCount" data-value="1">1개</button>
-                    <button type="button" data-target="indoorCourtCount" data-value="2">2개</button>
-                    <button type="button" data-target="indoorCourtCount" data-value="3">3개</button>
-                    <button type="button" data-target="indoorCourtCount" data-value="4">4개</button>
-                </div>
-            </div>
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 2.2em;
+    font-weight: 800;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
 
-            <div class="input-group">
-                <label for="indoorDiscountedCourtCount">실내 코트 감면 대상 수:</label>
-                <select id="indoorDiscountedCourtCount">
-                    <option value="0">0개</option>
-                </select>
-                <div class="button-row">
-                    <button type="button" data-target="indoorDiscountedCourtCount" data-value="0">0개</button>
-                </div>
-            </div>
+h2 {
+    text-align: center;
+    color: #34495e;
+    margin-bottom: 25px;
+    font-size: 1.6em;
+    font-weight: 700;
+}
 
-            <div class="input-group">
-                <label for="outdoorCourtCount">실외 코트 대여 수:</label>
-                <select id="outdoorCourtCount">
-                    <option value="0">0개</option>
-                    <option value="1">1개</option>
-                    <option value="2">2개</option>
-                    <option value="3">3개</option>
-                    <option value="4">4개</option>
-                </select>
-                <div class="button-row">
-                    <button type="button" data-target="outdoorCourtCount" data-value="0">0개</button>
-                    <button type="button" data-target="outdoorCourtCount" data-value="1">1개</button>
-                    <button type="button" data-target="outdoorCourtCount" data-value="2">2개</button>
-                    <button type="button" data-target="outdoorCourtCount" data-value="3">3개</button>
-                    <button type="button" data-target="outdoorCourtCount" data-value="4">4개</button>
-                </div>
-            </div>
+h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    margin-top: 25px;
+    font-size: 1.3em;
+    font-weight: 700;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #3498db;
+}
 
-            <div class="input-group">
-                <label for="outdoorDiscountedCourtCount">실외 코트 감면 대상 수:</label>
-                <select id="outdoorDiscountedCourtCount">
-                    <option value="0">0개</option>
-                </select>
-                <div class="button-row">
-                    <button type="button" data-target="outdoorDiscountedCourtCount" data-value="0">0개</button>
-                </div>
-            </div>
-        </div>
+.input-section, .result-section {
+    margin-bottom: 30px;
+    padding: 25px;
+    border: 2px solid #e8f4f8;
+    border-radius: 15px;
+    background: linear-gradient(145deg, #f8fbff, #ffffff);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
 
-        <div class="input-section">
-            <h2>인원 정보</h2>
-            <div class="input-group">
-                <label for="totalParticipants">총 인원수:</label>
-                <select id="totalParticipants">
-                    <option value="4">4명</option>
-                    <option value="5">5명</option>
-                    <option value="6">6명</option>
-                    <option value="7">7명</option>
-                    <option value="8">8명</option>
-                    <option value="9">9명</option>
-                    <option value="10">10명</option>
-                    <option value="11">11명</option>
-                    <option value="12">12명</option>
-                    <option value="13">13명</option>
-                    <option value="14">14명</option>
-                    <option value="15">15명</option>
-                    <option value="16">16명</option>
-                </select>
-                <div class="button-row">
-                    <button type="button" data-target="totalParticipants" data-value="4">4명</button>
-                    <button type="button" data-target="totalParticipants" data-value="5">5명</button>
-                    <button type="button" data-target="totalParticipants" data-value="6">6명</button>
-                    <button type="button" data-target="totalParticipants" data-value="7">7명</button>
-                    <button type="button" data-target="totalParticipants" data-value="8">8명</button>
-                    <button type="button" data-target="totalParticipants" data-value="9">9명</button>
-                    <button type="button" data-target="totalParticipants" data-value="10">10명</button>
-                    <button type="button" data-target="totalParticipants" data-value="11">11명</button>
-                    <button type="button" data-target="totalParticipants" data-value="12">12명</button>
-                </div>
-            </div>
+.input-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
 
-            <div class="input-group">
-                <label for="ballProviderCount">테니스공 제공자 수:</label>
-                <select id="ballProviderCount">
-                    <option value="0">0명</option>
-                    <option value="1" selected>1명</option>
-                    <option value="2">2명</option>
-                    <option value="3">3명</option>
-                    <option value="4">4명</option>
-                </select>
-                <div class="button-row">
-                    <button type="button" data-target="ballProviderCount" data-value="0">0명</button>
-                    <button type="button" data-target="ballProviderCount" data-value="1">1명</button>
-                    <button type="button" data-target="ballProviderCount" data-value="2">2명</button>
-                    <button type="button" data-target="ballProviderCount" data-value="3">3명</button>
-                    <button type="button" data-target="ballProviderCount" data-value="4">4명</button>
-                </div>
-            </div>
-            
-            <div id="ballProviders">
-                </div>
+.input-group label {
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #34495e;
+    font-size: 1.05em;
+}
 
-            <button id="calculateBtn">계산하기</button>
-        </div>
+.time-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
 
-        <div class="result-section">
-            <h2>계산 결과</h2>
-            <div id="results">
-                <p>🎾 <strong>총 코트 대여료:</strong> <span id="totalCourtRentalDisplayFee">0원</span></p>
-                <p>🥎 <strong>총 테니스 비용 (공 포함):</strong> <span id="totalTennisCost">0원</span></p>
-                <p>💰 <strong>1. 일반 참가자 송금액:</strong> <span id="regularParticipantAmount">0원</span></p>
-                <div id="ballProviderSettlement">
-                    </div>
-                <p id="courtManagerResult" style="display:none;">🌟 <strong>코트 대여 임무:</strong> <span id="courtManager">정보 없음</span></p>
-            </div>
-            <button id="shareKakao">카카오톡 공유</button>
-        </div>
-    </div>
+.court-section {
+    margin-bottom: 20px;
+}
 
-    <script src="script.js"></script>
-</body>
-</html>
+.court-group {
+    margin-bottom: 25px;
+}
+
+.participants-section {
+    margin-bottom: 20px;
+}
+
+.ball-section {
+    margin-bottom: 20px;
+}
+
+.ball-provider-detail {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #17a2b8;
+}
+
+.input-group input[type="date"],
+.input-group input[type="number"],
+.input-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e6ed;
+    border-radius: 10px;
+    font-size: 1.05em;
+    font-weight: 500;
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.input-group input[type="date"]:focus,
+.input-group input[type="number"]:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    transform: translateY(-1px);
+}
+
+.button-group {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.quick-btn {
+    flex: 1;
+    min-width: 45px;
+    padding: 8px 12px;
+    background: linear-gradient(145deg, #f0f9ff, #e0f2fe);
+    color: #0369a1;
+    border: 2px solid #bae6fd;
+    border-radius: 8px;
+    font-size: 0.9em;
+    font-weight: 600;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quick-btn:hover {
+    background: linear-gradient(145deg, #0ea5e9, #0284c7);
+    color: white;
+    border-color: #0284c7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+.quick-btn:active {
+    transform: translateY(0);
+}
+
+.main-button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(145deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.2em;
+    font-weight: 700;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 25px;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.main-button:hover {
+    background: linear-gradient(145deg, #5a67d8, #6b46c1);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+}
+
+.main-button:active {
+    transform: translateY(0);
+}
+
+#calculateBtn {
+    margin-bottom: 10px;
+}
+
+#results p {
+    background: linear-gradient(145deg, #eaf6fd, #f0f9ff);
+    padding: 15px 20px;
+    border-left: 5px solid #3498db;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    font-weight: 600;
+    line-height: 1.6;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+#results p strong {
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+#ballProviderSettlement p {
+    background: linear-gradient(145deg, #f7f7f7, #ffffff);
+    border-left: 5px solid #95a5a6;
+    font-weight: 500;
+}
+
+#ballProviderSettlement p:first-child {
+    font-weight: 700;
+    background: linear-gradient(145deg, #e8f5e8, #f0f8f0);
+    border-left: 5px solid #27ae60;
+}
+
+#shareKakao {
+    background: linear-gradient(145deg, #FEE500, #fada00);
+    color: #3C1E1E;
+    font-weight: 700;
+    margin-top: 20px;
+    box-shadow: 0 8px 20px rgba(254, 229, 0, 0.3);
+}
+
+#shareKakao:hover {
+    background: linear-gradient(145deg, #fada00, #f4d100);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(254, 229, 0, 0.4);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 600px) {
+    body {
+        padding: 15px;
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    h2 {
+        font-size: 1.4em;
+    }
+
+    h3 {
+        font-size: 1.2em;
+    }
+
+    .main-button {
+        padding: 12px;
+        font-size: 1.1em;
+    }
+
+    .quick-btn {
+        font-size: 0.85em;
+        padding: 6px 10px;
+    }
+
+    .input-group label {
+        font-size: 1em;
+    }
+
+    .input-group input,
+    .input-group select {
+        font-size: 1em;
+        padding: 10px 12px;
+    }
+
+    .time-group {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .button-group {
+        gap: 6px;
+    }
+}
+
+@media (max-width: 400px) {
+    .container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.6em;
+    }
+
+    .input-section, .result-section {
+        padding: 15px;
+    }
+
+    .quick-btn {
+        min-width: 35px;
+        font-size: 0.8em;
+    }
+}

@@ -3,158 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>테니스 코트비 계산기</title>
+    <title>코트비 계산기</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>테니스 코트비 계산기</h1>
+        <h1>🎾 테니스 코트비 계산기</h1>
 
         <div class="input-section">
-            <div class="input-group">
-                <label for="usageDate">날짜:</label>
-                <input type="date" id="usageDate">
-            </div>
-
-            <div class="input-group">
-                <label for="startTime">시작 시간:</label>
-                <select id="startTime"></select>
-            </div>
-
-            <div class="input-group">
-                <label for="endTime">종료 시간:</label>
-                <select id="endTime"></select>
-            </div>
-        </div>
-
-        <div class="input-section">
-            <h2>코트 대여 정보</h2>
-            <div class="input-group">
-                <label for="indoorCourtCount">실내 코트 대여 수:</label>
-                <select id="indoorCourtCount">
-                    <option value="0">0개</option>
-                    <option value="1">1개</option>
-                    <option value="2">2개</option>
-                    <option value="3">3개</option>
-                    <option value="4">4개</option>
-                </select>
-                <div class="button-row">
-                    <button type="button" data-target="indoorCourtCount" data-value="0">0개</button>
-                    <button type="button" data-target="indoorCourtCount" data-value="1">1개</button>
-                    <button type="button" data-target="indoorCourtCount" data-value="2">2개</button>
-                    <button type="button" data-target="indoorCourtCount" data-value="3">3개</button>
-                    <button type="button" data-target="indoorCourtCount" data-value="4">4개</button>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="indoorDiscountedCourtCount">실내 코트 감면 대상 수:</label>
-                <select id="indoorDiscountedCourtCount">
-                    <option value="0">0개</option>
-                </select>
-                <div class="button-row" id="indoorDiscountedCourtButtons">
-                    </div>
-            </div>
-
-            <div class="input-group">
-                <label for="outdoorCourtCount">실외 코트 대여 수:</label>
-                <select id="outdoorCourtCount">
-                    <option value="0">0개</option>
-                    <option value="1">1개</option>
-                    <option value="2">2개</option>
-                    <option value="3">3개</option>
-                    <option value="4">4개</option>
-                </select>
-                <div class="button-row">
-                    <button type="button" data-target="outdoorCourtCount" data-value="0">0개</button>
-                    <button type="button" data-target="outdoorCourtCount" data-value="1">1개</button>
-                    <button type="button" data-target="outdoorCourtCount" data-value="2">2개</button>
-                    <button type="button" data-target="outdoorCourtCount" data-value="3">3개</button>
-                    <button type="button" data-target="outdoorCourtCount" data-value="4">4개</button>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="outdoorDiscountedCourtCount">실외 코트 감면 대상 수:</label>
-                <select id="outdoorDiscountedCourtCount">
-                    <option value="0">0개</option>
-                </select>
-                <div class="button-row" id="outdoorDiscountedCourtButtons">
-                    </div>
-            </div>
-        </div>
-
-        <div class="input-section">
-            <h2>인원 정보</h2>
-            <div class="input-group">
-                <label for="totalParticipants">총 인원수:</label>
-                <select id="totalParticipants">
-                    <option value="4">4명</option>
-                    <option value="5">5명</option>
-                    <option value="6">6명</option>
-                    <option value="7">7명</option>
-                    <option value="8">8명</option>
-                    <option value="9">9명</option>
-                    <option value="10">10명</option>
-                    <option value="11">11명</option>
-                    <option value="12">12명</option>
-                    <option value="13">13명</option>
-                    <option value="14">14명</option>
-                    <option value="15">15명</option>
-                    <option value="16">16명</option>
-                </select>
-                <div class="button-row">
-                    <button type="button" data-target="totalParticipants" data-value="4">4명</button>
-                    <button type="button" data-target="totalParticipants" data-value="5">5명</button>
-                    <button type="button" data-target="totalParticipants" data-value="6">6명</button>
-                    <button type="button" data-target="totalParticipants" data-value="7">7명</button>
-                    <button type="button" data-target="totalParticipants" data-value="8">8명</button>
-                    <button type="button" data-target="totalParticipants" data-value="9">9명</button>
-                    <button type="button" data-target="totalParticipants" data-value="10">10명</button>
-                    <button type="button" data-target="totalParticipants" data-value="11">11명</button>
-                    <button type="button" data-target="totalParticipants" data-value="12">12명</button>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="ballProviderCount">테니스공 제공자 수:</label>
-                <select id="ballProviderCount">
-                    <option value="0">0명</option>
-                    <option value="1" selected>1명</option>
-                    <option value="2">2명</option>
-                    <option value="3">3명</option>
-                    <option value="4">4명</option>
-                </select>
-                <div class="button-row">
-                    <button type="button" data-target="ballProviderCount" data-value="0">0명</button>
-                    <button type="button" data-target="ballProviderCount" data-value="1">1명</button>
-                    <button type="button" data-target="ballProviderCount" data-value="2">2명</button>
-                    <button type="button" data-target="ballProviderCount" data-value="3">3명</button>
-                    <button type="button" data-target="ballProviderCount" data-value="4">4명</button>
-                </div>
-            </div>
+            <h3>📅 날짜 및 시간 정보</h3>
             
-            <div id="ballProviders">
+            <div class="input-group">
+                <label for="usageDate">사용 날짜:</label>
+                <input type="date" id="usageDate" style="background-image: none;">
+            </div>
+
+            <div class="time-group">
+                <div class="input-group">
+                    <label for="startTime">시작 시간:</label>
+                    <select id="startTime"></select>
+                </div>
+                <div class="input-group">
+                    <label for="endTime">종료 시간:</label>
+                    <select id="endTime"></select>
+                </div>
+            </div>
+
+            <h3>🏟️ 코트 대여 정보</h3>
+            
+            <div class="court-section">
+                <div class="court-group">
+                    <div class="input-group">
+                        <label for="indoorCourtCount">실내 코트 대여수:</label>
+                        <select id="indoorCourtCount">
+                            <option value="0">0개</option>
+                            <option value="1">1개</option>
+                            <option value="2">2개</option>
+                            <option value="3">3개</option>
+                            <option value="4">4개</option>
+                        </select>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="quick-btn" data-target="indoorCourtCount" data-value="0">0</button>
+                        <button type="button" class="quick-btn" data-target="indoorCourtCount" data-value="1">1</button>
+                        <button type="button" class="quick-btn" data-target="indoorCourtCount" data-value="2">2</button>
+                        <button type="button" class="quick-btn" data-target="indoorCourtCount" data-value="3">3</button>
+                        <button type="button" class="quick-btn" data-target="indoorCourtCount" data-value="4">4</button>
+                    </div>
                 </div>
 
-            <button id="calculateBtn">계산하기</button>
+                <div class="court-group">
+                    <div class="input-group">
+                        <label for="indoorDiscountCount">실내 코트 감면대상수:</label>
+                        <select id="indoorDiscountCount">
+                            <option value="0">0개</option>
+                            <option value="1">1개</option>
+                            <option value="2">2개</option>
+                            <option value="3">3개</option>
+                            <option value="4">4개</option>
+                        </select>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="quick-btn" data-target="indoorDiscountCount" data-value="0">0</button>
+                        <button type="button" class="quick-btn" data-target="indoorDiscountCount" data-value="1">1</button>
+                        <button type="button" class="quick-btn" data-target="indoorDiscountCount" data-value="2">2</button>
+                        <button type="button" class="quick-btn" data-target="indoorDiscountCount" data-value="3">3</button>
+                        <button type="button" class="quick-btn" data-target="indoorDiscountCount" data-value="4">4</button>
+                    </div>
+                </div>
+
+                <div class="court-group">
+                    <div class="input-group">
+                        <label for="outdoorCourtCount">실외 코트 대여수:</label>
+                        <select id="outdoorCourtCount">
+                            <option value="0">0개</option>
+                            <option value="1">1개</option>
+                            <option value="2">2개</option>
+                            <option value="3">3개</option>
+                            <option value="4">4개</option>
+                        </select>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="quick-btn" data-target="outdoorCourtCount" data-value="0">0</button>
+                        <button type="button" class="quick-btn" data-target="outdoorCourtCount" data-value="1">1</button>
+                        <button type="button" class="quick-btn" data-target="outdoorCourtCount" data-value="2">2</button>
+                        <button type="button" class="quick-btn" data-target="outdoorCourtCount" data-value="3">3</button>
+                        <button type="button" class="quick-btn" data-target="outdoorCourtCount" data-value="4">4</button>
+                    </div>
+                </div>
+
+                <div class="court-group">
+                    <div class="input-group">
+                        <label for="outdoorDiscountCount">실외 코트 감면대상수:</label>
+                        <select id="outdoorDiscountCount">
+                            <option value="0">0개</option>
+                            <option value="1">1개</option>
+                            <option value="2">2개</option>
+                            <option value="3">3개</option>
+                            <option value="4">4개</option>
+                        </select>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="quick-btn" data-target="outdoorDiscountCount" data-value="0">0</button>
+                        <button type="button" class="quick-btn" data-target="outdoorDiscountCount" data-value="1">1</button>
+                        <button type="button" class="quick-btn" data-target="outdoorDiscountCount" data-value="2">2</button>
+                        <button type="button" class="quick-btn" data-target="outdoorDiscountCount" data-value="3">3</button>
+                        <button type="button" class="quick-btn" data-target="outdoorDiscountCount" data-value="4">4</button>
+                    </div>
+                </div>
+            </div>
+
+            <h3>👥 인원 정보</h3>
+            
+            <div class="participants-section">
+                <div class="input-group">
+                    <label for="totalParticipants">총 인원:</label>
+                    <select id="totalParticipants">
+                        <option value="4">4명</option>
+                        <option value="5">5명</option>
+                        <option value="6">6명</option>
+                        <option value="7">7명</option>
+                        <option value="8">8명</option>
+                        <option value="9">9명</option>
+                        <option value="10">10명</option>
+                        <option value="11">11명</option>
+                        <option value="12">12명</option>
+                        <option value="13">13명</option>
+                        <option value="14">14명</option>
+                        <option value="15">15명</option>
+                        <option value="16">16명</option>
+                    </select>
+                </div>
+                <div class="button-group participants-buttons">
+                    <button type="button" class="quick-btn" data-target="totalParticipants" data-value="4">4</button>
+                    <button type="button" class="quick-btn" data-target="totalParticipants" data-value="5">5</button>
+                    <button type="button" class="quick-btn" data-target="totalParticipants" data-value="6">6</button>
+                    <button type="button" class="quick-btn" data-target="totalParticipants" data-value="7">7</button>
+                    <button type="button" class="quick-btn" data-target="totalParticipants" data-value="8">8</button>
+                    <button type="button" class="quick-btn" data-target="totalParticipants" data-value="9">9</button>
+                    <button type="button" class="quick-btn" data-target="totalParticipants" data-value="10">10</button>
+                    <button type="button" class="quick-btn" data-target="totalParticipants" data-value="11">11</button>
+                    <button type="button" class="quick-btn" data-target="totalParticipants" data-value="12">12</button>
+                </div>
+            </div>
+
+            <div class="ball-section">
+                <div class="input-group">
+                    <label for="ballProviderCount">테니스공 제공자수:</label>
+                    <select id="ballProviderCount">
+                        <option value="0">0명</option>
+                        <option value="1">1명</option>
+                        <option value="2">2명</option>
+                        <option value="3">3명</option>
+                        <option value="4">4명</option>
+                    </select>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="quick-btn" data-target="ballProviderCount" data-value="0">0</button>
+                    <button type="button" class="quick-btn" data-target="ballProviderCount" data-value="1">1</button>
+                    <button type="button" class="quick-btn" data-target="ballProviderCount" data-value="2">2</button>
+                    <button type="button" class="quick-btn" data-target="ballProviderCount" data-value="3">3</button>
+                    <button type="button" class="quick-btn" data-target="ballProviderCount" data-value="4">4</button>
+                </div>
+
+                <div id="ballProviderDetails"></div>
+            </div>
+
+            <button id="calculateBtn" class="main-button">💰 계산하기</button>
         </div>
 
         <div class="result-section">
-            <h2>계산 결과</h2>
+            <h2>📊 계산 결과</h2>
             <div id="results">
-                <p>🎾 <strong>총 코트 대여료:</strong> <span id="totalCourtRentalDisplayFee">0원</span></p>
+                <p>🏟️ <strong>총 코트 대여료:</strong> <span id="totalCourtRentalDisplayFee">0원</span></p>
                 <p>🥎 <strong>총 테니스 비용 (공 포함):</strong> <span id="totalTennisCost">0원</span></p>
                 <p>💰 <strong>1. 일반 참가자 송금액:</strong> <span id="regularParticipantAmount">0원</span></p>
-                <div id="ballProviderSettlement">
-                    </div>
-                <p id="courtManagerResult" style="display:none;">🌟 <strong>코트 대여 임무:</strong> <span id="courtManager">정보 없음</span></p>
+                <div id="ballProviderSettlement"></div>
+                <div id="courtManagerSection">
+                    <p>🌟 <strong>코트 대여 임무:</strong> <span id="courtManager">정보 없음</span></p>
+                </div>
             </div>
-            <button id="shareKakao">카카오톡 공유</button>
+            <button id="shareKakao" class="main-button">📱 카카오톡 공유</button>
         </div>
     </div>
 
