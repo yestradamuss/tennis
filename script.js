@@ -540,19 +540,27 @@ shareKakaoBtn.addEventListener('click', function() {
     shareText += `총 테니스 비용 (공 포함): ${totalTennisCostSpan.textContent}\n\n`;
     shareText += `1. 일반 참가자 송금액: ${regularParticipantAmountSpan.textContent}\n`;
     
-    const settlementHtml = ballProviderSettlementDiv.innerHTML;
-    if (settlementHtml.trim() !== '') {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = settlementHtml;
-        let settlementText = tempDiv.textContent
-            .replace(/🎾|🥎|💰|🏃‍♂️|🌟/g, '')
-            .replace(/총 테니스공 제공자 정산:/g, '2. 테니스공 제공자 정산:')
-            .replace(/(\r\n|\n|\r)/gm, '\n')
-            .split('\n')
-            .map(line => line.trim())
-            .filter(line => line.length > 0)
-            .join('\n');
-        shareText += `\n${settlementText}\n`;
+    // 2. 테니스공 제공자 정산 부분 처리 개선
+    // HTML 내용을 직접 텍스트로 변환하는 대신, 각 줄을 명시적으로 추가
+    if (ballProviderSettlementDiv.children.length > 0) {
+        shareText += `\n2. 테니스공 제공자 정산:\n`; // 제목과 함께 줄바꿈
+        Array.from(ballProviderSettlementDiv.children).forEach(child => {
+            // 각 P 태그의 텍스트 내용을 가져와서 줄바꿈과 함께 추가
+            // HTML 태그 (<strong> 등) 및 불필요한 공백 제거
+            let lineText = child.textContent.trim();
+
+            // 이모지 제거 (옵션, 필요한 경우만)
+            lineText = lineText.replace(/💰|🏃‍♂️/g, '');
+
+            // 줄의 시작이 '-' 이거나 '환급:' 또는 '부지런한사람:' 으로 시작하면 들여쓰기 추가
+            if (lineText.startsWith('-') || lineText.startsWith('환급:') || lineText.startsWith('부지런한사람:')) {
+                shareText += `  ${lineText}\n`;
+            } else {
+                shareText += `${lineText}\n`;
+            }
+        });
+        // 마지막에 추가적인 줄바꿈 추가 (선택 사항, 내용에 따라 조절)
+        shareText += `\n`;
     }
     
     if (courtManagerSection.style.display !== 'none') {
