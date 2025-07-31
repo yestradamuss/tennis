@@ -12,7 +12,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎾 테니스 코트비 계산기</h1>
+        <div class="header">
+            <h1>🎾 테니스 코트비 계산기</h1>
+            <a href="https://script.google.com/macros/s/AKfycbzK0WSHt8v7Fep25FSKPyEpww3XYIqRMmr54Op1oEIYqjAwLSiucyasz2xo8bbgHCgHnQ/exec" target="_blank" class="ranking-btn">랭킹보드</a>
+        </div>
 
         <div class="input-section">
             <h3>📅 날짜 및 시간 정보</h3>
@@ -188,6 +191,40 @@
                 </div>
             </div>
             <button id="shareKakao" class="main-button">📱 카카오톡 공유</button>
+        </div>
+
+        <!-- 계산기 섹션 추가 -->
+        <div class="calculator-section">
+            <h2>🧮 간단 계산기</h2>
+            <div class="calculator">
+                <div class="calculator-display">
+                    <input type="text" id="calcDisplay" readonly placeholder="0">
+                </div>
+                <div class="calculator-buttons">
+                    <button class="calc-btn calc-clear" onclick="clearCalculator()">C</button>
+                    <button class="calc-btn calc-operator" onclick="deleteLast()">⌫</button>
+                    <button class="calc-btn calc-operator" onclick="appendToDisplay('/')">/</button>
+                    <button class="calc-btn calc-operator" onclick="appendToDisplay('*')">×</button>
+                    
+                    <button class="calc-btn calc-number" onclick="appendToDisplay('7')">7</button>
+                    <button class="calc-btn calc-number" onclick="appendToDisplay('8')">8</button>
+                    <button class="calc-btn calc-number" onclick="appendToDisplay('9')">9</button>
+                    <button class="calc-btn calc-operator" onclick="appendToDisplay('-')">-</button>
+                    
+                    <button class="calc-btn calc-number" onclick="appendToDisplay('4')">4</button>
+                    <button class="calc-btn calc-number" onclick="appendToDisplay('5')">5</button>
+                    <button class="calc-btn calc-number" onclick="appendToDisplay('6')">6</button>
+                    <button class="calc-btn calc-operator" onclick="appendToDisplay('+')">+</button>
+                    
+                    <button class="calc-btn calc-number" onclick="appendToDisplay('1')">1</button>
+                    <button class="calc-btn calc-number" onclick="appendToDisplay('2')">2</button>
+                    <button class="calc-btn calc-number" onclick="appendToDisplay('3')">3</button>
+                    <button class="calc-btn calc-equals" onclick="calculateResult()" rowspan="2">=</button>
+                    
+                    <button class="calc-btn calc-number calc-zero" onclick="appendToDisplay('0')">0</button>
+                    <button class="calc-btn calc-number" onclick="appendToDisplay('.')">.</button>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -1,18 +1,4 @@
-.participants-section .button-group {
-    display: flex;
-    gap: 4px;
-    margin-top: 10px;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-}
-
-.participants-section .quick-btn {
-    flex: 1;
-    min-width: 30px;
-    padding: 6px 8px;
-    font-size: 0.85em;
-    font-weight: 600;
-}/* 구글 폰트 적용 및 전체 기본 스타일 */
+/* 구글 폰트 적용 및 전체 기본 스타일 */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -29,111 +15,125 @@ body {
     margin: 0;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #2c3e50;
-    padding: 20px;
-    line-height: 1.6;
+    padding: 8px;
+    line-height: 1.4;
+    font-size: 14px;
 }
 
 .container {
     background-color: #ffffff;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
     width: 100%;
-    max-width: 500px;
+    max-width: 380px; /* 기존 500px에서 380px로 축소 */
     backdrop-filter: blur(10px);
+    position: relative;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    position: relative;
+    gap: 8px;
+}
+
+.ranking-btn {
+    background: linear-gradient(145deg, #FFD54F, #FFC107);
+    color: #424242;
+    padding: 6px 8px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.7em;
+    font-weight: 700;
+    font-family: 'Noto Sans KR', sans-serif;
+    box-shadow: 0 3px 10px rgba(255, 193, 7, 0.4);
+    transition: all 0.3s ease;
+    border: 2px solid #FFC107;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 60px;
+    text-align: center;
+}
+
+.ranking-btn:hover {
+    background: linear-gradient(145deg, #FFC107, #FF8F00);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 193, 7, 0.6);
+    border-color: #FF8F00;
 }
 
 h1 {
-    text-align: center;
-    color: #2c3e50;
-    margin-bottom: 30px;
-    font-size: 2.2em;
+    color: #42A5F5;
+    margin: 0;
+    font-size: 1.2em;
     font-weight: 800;
-    background: linear-gradient(45deg, #667eea, #764ba2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    flex: 1;
+    line-height: 1.2;
+    word-break: keep-all;
+    text-align: center;
 }
 
 h2 {
     text-align: center;
     color: #34495e;
-    margin-bottom: 25px;
-    font-size: 1.6em;
+    margin-bottom: 6px;
+    font-size: 1.1em;
     font-weight: 700;
 }
 
 h3 {
     color: #2c3e50;
-    margin-bottom: 20px;
-    margin-top: 25px;
-    font-size: 1.3em;
+    margin-bottom: 6px;
+    margin-top: 10px;
+    font-size: 0.95em;
     font-weight: 700;
-    padding-bottom: 8px;
-    border-bottom: 3px solid #3498db;
+    padding-bottom: 3px;
+    border-bottom: 2px solid #42A5F5;
 }
 
-.input-section, .result-section {
-    margin-bottom: 30px;
-    padding: 25px;
+.input-section {
+    margin-bottom: 8px;
+    padding: 10px;
     border: 2px solid #e8f4f8;
-    border-radius: 15px;
+    border-radius: 10px;
     background: linear-gradient(145deg, #f8fbff, #ffffff);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.result-section {
+    margin-bottom: 8px;
+    padding: 10px;
+    border: 2px solid #E8F5E8;
+    border-radius: 10px;
+    background: linear-gradient(145deg, #E8F5E8, #C8E6C9);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15);
 }
 
 .input-group {
-    margin-bottom: 20px;
+    margin-bottom: 6px;
     display: flex;
     flex-direction: column;
 }
 
 .input-group label {
-    margin-bottom: 8px;
+    margin-bottom: 2px;
     font-weight: 700;
     color: #34495e;
-    font-size: 1.05em;
-}
-
-.time-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.court-section {
-    margin-bottom: 20px;
-}
-
-.court-group {
-    margin-bottom: 25px;
-}
-
-.participants-section {
-    margin-bottom: 20px;
-}
-
-.ball-section {
-    margin-bottom: 20px;
-}
-
-.ball-provider-detail {
-    margin-top: 15px;
-    padding: 15px;
-    background-color: #f8f9fa;
-    border-radius: 10px;
-    border-left: 4px solid #17a2b8;
+    font-size: 0.8em;
 }
 
 .input-group input[type="date"],
 .input-group input[type="number"],
 .input-group select {
     width: 100%;
-    padding: 12px 15px;
+    padding: 6px 8px;
     border: 2px solid #e0e6ed;
-    border-radius: 10px;
-    font-size: 1.05em;
+    border-radius: 6px;
+    font-size: 0.85em;
     font-weight: 500;
     font-family: 'Noto Sans KR', sans-serif;
     background-color: #ffffff;
@@ -144,27 +144,58 @@ h3 {
 .input-group input[type="number"]:focus,
 .input-group select:focus {
     outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    border-color: #42A5F5;
+    box-shadow: 0 0 0 2px rgba(66, 165, 245, 0.1);
     transform: translateY(-1px);
+}
+
+.time-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.court-section {
+    margin-bottom: 8px;
+}
+
+.court-group {
+    margin-bottom: 10px;
+}
+
+.participants-section {
+    margin-bottom: 8px;
+}
+
+.ball-section {
+    margin-bottom: 8px;
+}
+
+.ball-provider-detail {
+    margin-top: 6px;
+    padding: 6px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border-left: 3px solid #17a2b8;
 }
 
 .button-group {
     display: flex;
-    gap: 8px;
-    margin-top: 10px;
+    gap: 2px;
+    margin-top: 2px;
     flex-wrap: wrap;
 }
 
 .quick-btn {
     flex: 1;
-    min-width: 45px;
-    padding: 8px 12px;
-    background: linear-gradient(145deg, #f0f9ff, #e0f2fe);
-    color: #0369a1;
-    border: 2px solid #bae6fd;
-    border-radius: 8px;
-    font-size: 0.9em;
+    min-width: 28px;
+    padding: 4px 6px;
+    background: linear-gradient(145deg, #e3f2fd, #bbdefb);
+    color: #1565c0;
+    border: 2px solid #90caf9;
+    border-radius: 4px;
+    font-size: 0.7em;
     font-weight: 600;
     font-family: 'Noto Sans KR', sans-serif;
     cursor: pointer;
@@ -172,158 +203,320 @@ h3 {
 }
 
 .quick-btn:hover {
-    background: linear-gradient(145deg, #0ea5e9, #0284c7);
+    background: linear-gradient(145deg, #2196f3, #1976d2);
     color: white;
-    border-color: #0284c7;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+    border-color: #1976d2;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(33, 150, 243, 0.3);
 }
 
-.quick-btn:active {
-    transform: translateY(0);
+.participants-buttons {
+    display: flex;
+    gap: 1px;
+    margin-top: 2px;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+
+.participants-buttons .quick-btn {
+    flex: 1;
+    min-width: 20px;
+    padding: 3px 2px;
+    font-size: 0.65em;
+    font-weight: 600;
 }
 
 .main-button {
     display: block;
     width: 100%;
-    padding: 15px;
-    background: linear-gradient(145deg, #667eea, #764ba2);
+    padding: 8px;
+    background: linear-gradient(145deg, #1976d2, #0d47a1);
     color: white;
     border: none;
-    border-radius: 12px;
-    font-size: 1.2em;
+    border-radius: 6px;
+    font-size: 0.9em;
     font-weight: 700;
     font-family: 'Noto Sans KR', sans-serif;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-top: 25px;
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    margin-top: 8px;
+    box-shadow: 0 6px 15px rgba(25, 118, 210, 0.3);
 }
 
 .main-button:hover {
-    background: linear-gradient(145deg, #5a67d8, #6b46c1);
+    background: linear-gradient(145deg, #0d47a1, #01579b);
     transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
-}
-
-.main-button:active {
-    transform: translateY(0);
+    box-shadow: 0 8px 20px rgba(25, 118, 210, 0.4);
 }
 
 #calculateBtn {
-    margin-bottom: 10px;
+    margin-bottom: 4px;
 }
 
 #results p {
-    background: linear-gradient(145deg, #eaf6fd, #f0f9ff);
-    padding: 15px 20px;
-    border-left: 5px solid #3498db;
-    border-radius: 12px;
-    margin-bottom: 15px;
-    font-size: 1.1em;
+    background: linear-gradient(145deg, #ffffff, #f5f5f5);
+    padding: 6px 8px;
+    border-left: 3px solid #4CAF50;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    font-size: 0.8em;
     font-weight: 600;
-    line-height: 1.6;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    line-height: 1.3;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    word-break: keep-all;
+    overflow-wrap: break-word;
 }
 
 #results p strong {
-    color: #2c3e50;
+    color: #2E7D32;
     font-weight: 700;
 }
 
 #ballProviderSettlement p {
-    background: linear-gradient(145deg, #f7f7f7, #ffffff);
-    border-left: 5px solid #95a5a6;
+    background: linear-gradient(145deg, #f1f8e9, #e8f5e8);
+    border-left: 3px solid #4caf50;
     font-weight: 500;
 }
 
 #ballProviderSettlement p:first-child {
     font-weight: 700;
-    background: linear-gradient(145deg, #e8f5e8, #f0f8f0);
-    border-left: 5px solid #27ae60;
+    background: linear-gradient(145deg, #e8f5e8, #c8e6c9);
+    border-left: 3px solid #2e7d32;
 }
 
 #shareKakao {
     background: linear-gradient(145deg, #FEE500, #fada00);
     color: #3C1E1E;
     font-weight: 700;
-    margin-top: 20px;
-    box-shadow: 0 8px 20px rgba(254, 229, 0, 0.3);
+    margin-top: 6px;
+    box-shadow: 0 6px 15px rgba(254, 229, 0, 0.3);
 }
 
 #shareKakao:hover {
     background: linear-gradient(145deg, #fada00, #f4d100);
     transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(254, 229, 0, 0.4);
+    box-shadow: 0 8px 20px rgba(254, 229, 0, 0.4);
+}
+
+/* 계산기 스타일 */
+.calculator-section {
+    margin-bottom: 8px;
+    padding: 10px;
+    border: 2px solid #E3F2FD;
+    border-radius: 10px;
+    background: linear-gradient(145deg, #E3F2FD, #BBDEFB);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
+}
+
+.calculator {
+    max-width: 100%;
+}
+
+.calculator-display {
+    margin-bottom: 8px;
+}
+
+.calculator-display input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.2em;
+    font-weight: 600;
+    text-align: right;
+    border: 2px solid #1976D2;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #1565C0;
+    font-family: 'Courier New', monospace;
+}
+
+.calculator-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+}
+
+.calc-btn {
+    padding: 12px 8px;
+    font-size: 1.0em;
+    font-weight: 600;
+    font-family: 'Noto Sans KR', sans-serif;
+    border: 2px solid;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 44px;
+}
+
+.calc-number {
+    background: linear-gradient(145deg, #ffffff, #f5f5f5);
+    color: #2c3e50;
+    border-color: #e0e6ed;
+}
+
+.calc-number:hover {
+    background: linear-gradient(145deg, #f5f5f5, #e0e6ed);
+    transform: translateY(-1px);
+}
+
+.calc-operator {
+    background: linear-gradient(145deg, #FF9800, #F57C00);
+    color: white;
+    border-color: #F57C00;
+}
+
+.calc-operator:hover {
+    background: linear-gradient(145deg, #F57C00, #E65100);
+    transform: translateY(-1px);
+}
+
+.calc-equals {
+    background: linear-gradient(145deg, #4CAF50, #388E3C);
+    color: white;
+    border-color: #388E3C;
+    grid-row: span 2;
+}
+
+.calc-equals:hover {
+    background: linear-gradient(145deg, #388E3C, #2E7D32);
+    transform: translateY(-1px);
+}
+
+.calc-clear {
+    background: linear-gradient(145deg, #f44336, #d32f2f);
+    color: white;
+    border-color: #d32f2f;
+}
+
+.calc-clear:hover {
+    background: linear-gradient(145deg, #d32f2f, #c62828);
+    transform: translateY(-1px);
+}
+
+.calc-zero {
+    grid-column: span 2;
 }
 
 /* 반응형 디자인 */
-@media (max-width: 600px) {
+@media (max-width: 400px) {
     body {
-        padding: 15px;
+        padding: 5px;
+        font-size: 13px;
     }
 
     .container {
-        padding: 20px;
+        padding: 10px;
+        max-width: 350px;
     }
 
     h1 {
-        font-size: 1.8em;
-    }
-
-    h2 {
-        font-size: 1.4em;
-    }
-
-    h3 {
-        font-size: 1.2em;
-    }
-
-    .main-button {
-        padding: 12px;
         font-size: 1.1em;
     }
 
-    .quick-btn {
+    .ranking-btn {
+        font-size: 0.65em;
+        padding: 5px 6px;
+        min-width: 55px;
+    }
+
+    h2 {
+        font-size: 1.0em;
+    }
+
+    h3 {
+        font-size: 0.9em;
+    }
+
+    .main-button {
+        padding: 7px;
         font-size: 0.85em;
-        padding: 6px 10px;
+    }
+
+    .quick-btn {
+        font-size: 0.65em;
+        padding: 3px 4px;
+        min-width: 25px;
     }
 
     .input-group label {
-        font-size: 1em;
+        font-size: 0.75em;
     }
 
     .input-group input,
     .input-group select {
-        font-size: 1em;
-        padding: 10px 12px;
+        font-size: 0.8em;
+        padding: 5px 6px;
     }
 
     .time-group {
-        grid-template-columns: 1fr;
-        gap: 10px;
+        gap: 4px;
     }
 
     .button-group {
-        gap: 6px;
+        gap: 1px;
+    }
+
+    .participants-buttons .quick-btn {
+        min-width: 18px;
+        padding: 2px 1px;
+        font-size: 0.6em;
+    }
+
+    #results p {
+        font-size: 0.75em;
+        padding: 5px 6px;
+        margin-bottom: 3px;
+    }
+
+    .calc-btn {
+        padding: 10px 6px;
+        font-size: 0.9em;
+        min-height: 40px;
+    }
+
+    .calculator-display input {
+        padding: 10px;
+        font-size: 1.1em;
     }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 320px) {
     .container {
-        padding: 15px;
+        padding: 8px;
+        max-width: 310px;
     }
 
     h1 {
-        font-size: 1.6em;
+        font-size: 1.0em;
+    }
+
+    .ranking-btn {
+        font-size: 0.6em;
+        padding: 4px 5px;
+        min-width: 50px;
     }
 
     .input-section, .result-section {
-        padding: 15px;
+        padding: 8px;
     }
 
     .quick-btn {
-        min-width: 35px;
-        font-size: 0.8em;
+        min-width: 22px;
+        font-size: 0.6em;
+    }
+
+    .participants-buttons .quick-btn {
+        min-width: 16px;
+        font-size: 0.55em;
+    }
+
+    .calc-btn {
+        padding: 8px 4px;
+        font-size: 0.85em;
+        min-height: 36px;
+    }
+
+    .calculator-display input {
+        padding: 8px;
+        font-size: 1.0em;
     }
 }

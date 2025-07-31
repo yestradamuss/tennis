@@ -80,7 +80,8 @@ function populateTimeOptions() {
     startTimeSelect.innerHTML = '';
     endTimeSelect.innerHTML = '';
     
-    for (let i = 0; i < 24; i++) {
+    // 05시부터 22시까지만 생성
+    for (let i = 5; i <= 22; i++) {
         const hour = String(i).padStart(2, '0');
         const startOption = document.createElement('option');
         startOption.value = hour;
@@ -201,21 +202,36 @@ function findCourtManager(dateString) {
 
 function updateBallProviderDetails() {
     const count = parseInt(ballProviderCountSelect.value);
+    const indoorCount = parseInt(indoorCourtCountSelect.value);
+    const outdoorCount = parseInt(outdoorCourtCountSelect.value);
+    
+    // 총 코트수 = 실내코트수 + 실외코트수 (감면코트는 이미 포함되어 있으므로 별도로 빼지 않음)
+    const totalCourts = indoorCount + outdoorCount;
+    
     ballProviderDetailsDiv.innerHTML = '';
 
     for (let i = 1; i <= count; i++) {
         const detailDiv = document.createElement('div');
         detailDiv.className = 'ball-provider-detail';
         
+        // 공 개수 기본값 계산 - 총 코트수를 공급자 수로 나누어 분배
+        let defaultBallCount = 0;
+        if (count > 0 && totalCourts > 0) {
+            const baseCount = Math.floor(totalCourts / count);
+            const remainder = totalCourts % count;
+            // 앞쪽 제공자들이 나머지를 하나씩 더 가져가도록
+            defaultBallCount = baseCount + (i <= remainder ? 1 : 0);
+        }
+        
         detailDiv.innerHTML = `
             <div class="input-group">
                 <label for="ballProvider${i}Count">공 제공자 ${i} 공 개수:</label>
                 <select id="ballProvider${i}Count">
-                    <option value="0">0개</option>
-                    <option value="1" selected>1개</option>
-                    <option value="2">2개</option>
-                    <option value="3">3개</option>
-                    <option value="4">4개</option>
+                    <option value="0" ${defaultBallCount === 0 ? 'selected' : ''}>0개</option>
+                    <option value="1" ${defaultBallCount === 1 ? 'selected' : ''}>1개</option>
+                    <option value="2" ${defaultBallCount === 2 ? 'selected' : ''}>2개</option>
+                    <option value="3" ${defaultBallCount === 3 ? 'selected' : ''}>3개</option>
+                    <option value="4" ${defaultBallCount === 4 ? 'selected' : ''}>4개</option>
                 </select>
             </div>
             <div class="button-group">
@@ -243,23 +259,20 @@ function setDefaultValues() {
     
     usageDateInput.value = todayStr;
     
+    // 평일/주말 상관없이 모든 경우에 동일한 기본값 설정
     if (isWeekend(todayStr)) {
         startTimeSelect.value = '06';
         endTimeSelect.value = '08';
-        // 주말 기본값: 실내 2개, 실내 감면 1개, 실외 0개
-        indoorCourtCountSelect.value = '2';
-        indoorDiscountCountSelect.value = '1';
-        outdoorCourtCountSelect.value = '0';
-        outdoorDiscountCountSelect.value = '0';
     } else {
         startTimeSelect.value = '10';
         endTimeSelect.value = '12';
-        // 평일 기본값: 실외 1개
-        indoorCourtCountSelect.value = '0';
-        indoorDiscountCountSelect.value = '0';
-        outdoorCourtCountSelect.value = '1';
-        outdoorDiscountCountSelect.value = '0';
     }
+    
+    // 항상 동일한 기본값: 실내 2개, 실내 감면 1개, 실외 0개, 실외 감면 0개
+    indoorCourtCountSelect.value = '2';
+    indoorDiscountCountSelect.value = '1';
+    outdoorCourtCountSelect.value = '0';
+    outdoorDiscountCountSelect.value = '0';
     
     updateTotalParticipants();
     ballProviderCountSelect.value = '1';
@@ -291,6 +304,7 @@ function attachQuickButtonListeners() {
                     updateBallProviderDetails();
                 } else if (targetId === 'indoorCourtCount' || targetId === 'outdoorCourtCount') {
                     updateTotalParticipants();
+                    updateBallProviderDetails(); // 코트수 변경시 공 개수도 업데이트
                 }
             }
         });
@@ -429,7 +443,7 @@ function calculateFees() {
                     calculationText += ` = ${remainingRefund.toLocaleString()}원`;
                     
                     const calculationP = document.createElement('p');
-                    calculationP.innerHTML = `  계산: ${calculationText}`;
+                    calculationP.innerHTML = `  환급: ${calculationText}`;
                     calculationP.style.marginLeft = '20px';
                     calculationP.style.fontSize = '0.9em';
                     calculationP.style.color = '#666';
@@ -472,6 +486,8 @@ document.addEventListener('DOMContentLoaded', () => {
     populateTimeOptions();
     setDefaultValues();
     attachQuickButtonListeners();
+    // 초기 화면에 기본 계산 결과 표시
+    calculateFees();
 });
 
 usageDateInput.addEventListener('change', (event) => {
@@ -489,13 +505,27 @@ usageDateInput.addEventListener('change', (event) => {
     outdoorCourtCountSelect.value = '0';
     outdoorDiscountCountSelect.value = '0';
     updateTotalParticipants();
+    updateBallProviderDetails();
+});
+
+// 시작 시간 변경 시 종료 시간 자동 설정
+startTimeSelect.addEventListener('change', (event) => {
+    const startHour = parseInt(event.target.value);
+    const endHour = Math.min(startHour + 2, 22); // 2시간 후로 설정하되 22시를 넘지 않음
+    endTimeSelect.value = String(endHour).padStart(2, '0');
+});
+
+// 코트 수 변경 시 공 제공자 세부사항도 업데이트
+indoorCourtCountSelect.addEventListener('change', () => {
+    updateTotalParticipants();
+    updateBallProviderDetails();
+});
+outdoorCourtCountSelect.addEventListener('change', () => {
+    updateTotalParticipants();
+    updateBallProviderDetails();
 });
 
 ballProviderCountSelect.addEventListener('change', updateBallProviderDetails);
-
-// 코트 수 변경 시 총 인원수 업데이트
-indoorCourtCountSelect.addEventListener('change', updateTotalParticipants);
-outdoorCourtCountSelect.addEventListener('change', updateTotalParticipants);
 
 calculateBtn.addEventListener('click', calculateFees);
 
@@ -538,4 +568,63 @@ shareKakaoBtn.addEventListener('click', function() {
             webUrl: window.location.href,
         },
     });
+});
+
+// 계산기 함수들
+let calcDisplay = '';
+let lastOperator = '';
+let waitingForOperand = false;
+
+function appendToDisplay(value) {
+    const display = document.getElementById('calcDisplay');
+    
+    if (waitingForOperand) {
+        calcDisplay = value;
+        waitingForOperand = false;
+    } else {
+        calcDisplay = calcDisplay === '0' ? value : calcDisplay + value;
+    }
+    
+    display.value = calcDisplay;
+}
+
+function clearCalculator() {
+    calcDisplay = '0';
+    lastOperator = '';
+    waitingForOperand = false;
+    document.getElementById('calcDisplay').value = calcDisplay;
+}
+
+function deleteLast() {
+    if (calcDisplay.length > 1) {
+        calcDisplay = calcDisplay.slice(0, -1);
+    } else {
+        calcDisplay = '0';
+    }
+    document.getElementById('calcDisplay').value = calcDisplay;
+}
+
+function calculateResult() {
+    try {
+        // 보안을 위해 안전한 계산만 허용
+        const sanitized = calcDisplay.replace(/[^0-9+\-*/.() ]/g, '');
+        const result = Function('"use strict"; return (' + sanitized + ')')();
+        
+        if (result === Infinity || result === -Infinity || isNaN(result)) {
+            throw new Error('Invalid calculation');
+        }
+        
+        calcDisplay = result.toString();
+        document.getElementById('calcDisplay').value = calcDisplay;
+        waitingForOperand = true;
+    } catch (error) {
+        calcDisplay = 'Error';
+        document.getElementById('calcDisplay').value = calcDisplay;
+        waitingForOperand = true;
+    }
+}
+
+// 계산기 초기화
+document.addEventListener('DOMContentLoaded', () => {
+    clearCalculator();
 });
