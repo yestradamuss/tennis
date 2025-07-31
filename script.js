@@ -409,7 +409,8 @@ function calculateFees() {
     
     if (ballProviderCount > 0) {
         const headerP = document.createElement('p');
-        headerP.innerHTML = `💰 <strong>2. 테니스공 제공자 정산:</strong>`;
+        // 이모지 (💰)는 여기서만 추가하고, shareKakaoBtn에서는 이 텍스트를 건너뛸 것임.
+        headerP.innerHTML = `💰 <strong>2. 테니스공 제공자 정산:</strong>`; 
         ballProviderSettlementDiv.appendChild(headerP);
 
         for (let i = 1; i <= ballProviderCount; i++) {
@@ -443,7 +444,8 @@ function calculateFees() {
                     calculationText += ` = ${remainingRefund.toLocaleString()}원`;
                     
                     const calculationP = document.createElement('p');
-                    calculationP.innerHTML = `  환급: ${calculationText}`;
+                    // '환급:' 앞에 💰 이모지 추가
+                    calculationP.innerHTML = `  💰 환급: ${calculationText}`;
                     calculationP.style.marginLeft = '20px';
                     calculationP.style.fontSize = '0.9em';
                     calculationP.style.color = '#666';
@@ -453,6 +455,7 @@ function calculateFees() {
                     if (remainingRefund > 0) {
                         const diligentPersonAmount = regularParticipantAmount - remainingRefund;
                         const diligentPersonP = document.createElement('p');
+                        // '부지런한사람:' 앞에 🏃‍♂️ 이모지 추가
                         diligentPersonP.innerHTML = `🏃‍♂️ <strong>부지런한사람:</strong> (${regularParticipantAmount.toLocaleString()}원 - ${remainingRefund.toLocaleString()}원 = ${diligentPersonAmount.toLocaleString()}원)`;
                         diligentPersonP.style.marginLeft = '30px';
                         ballProviderSettlementDiv.appendChild(diligentPersonP);
@@ -541,19 +544,25 @@ shareKakaoBtn.addEventListener('click', function() {
     shareText += `1. 일반 참가자 송금액: ${regularParticipantAmountSpan.textContent}\n`;
     
     // 2. 테니스공 제공자 정산 부분 처리 개선
-    // HTML 내용을 직접 텍스트로 변환하는 대신, 각 줄을 명시적으로 추가
     if (ballProviderSettlementDiv.children.length > 0) {
-        shareText += `\n2. 테니스공 제공자 정산:\n`; // 제목과 함께 줄바꿈
+        shareText += `\n2. 테니스공 제공자 정산:\n`; // 메인 제목은 여기서 한 번만 추가
+
+        let isFirstChild = true; 
         Array.from(ballProviderSettlementDiv.children).forEach(child => {
-            // 각 P 태그의 텍스트 내용을 가져와서 줄바꿈과 함께 추가
-            // HTML 태그 (<strong> 등) 및 불필요한 공백 제거
+            if (isFirstChild) {
+                // 첫 번째 자식은 HTML에 '💰 2. 테니스공 제공자 정산:' 헤더이므로 스킵
+                // 이미 위에서 shareText에 추가했기 때문
+                isFirstChild = false;
+                return; 
+            }
+
             let lineText = child.textContent.trim();
 
-            // 이모지 제거 (옵션, 필요한 경우만)
-            lineText = lineText.replace(/💰|🏃‍♂️/g, '');
-
-            // 줄의 시작이 '-' 이거나 '환급:' 또는 '부지런한사람:' 으로 시작하면 들여쓰기 추가
-            if (lineText.startsWith('-') || lineText.startsWith('환급:') || lineText.startsWith('부지런한사람:')) {
+            // 기존에 HTML에서 추가된 이모지들은 textContent에 이미 포함되어 있으므로,
+            // 별도로 추가하거나 제거할 필요 없이 그대로 사용합니다.
+            // 예를 들어 '💰 환급:'이나 '🏃‍♂️ 부지런한사람:'은 textContent에 이미 있습니다.
+            // 다만, 들여쓰기를 위해 다시 검사하여 추가합니다.
+            if (lineText.startsWith('-') || lineText.includes('환급:') || lineText.includes('부지런한사람:')) {
                 shareText += `  ${lineText}\n`;
             } else {
                 shareText += `${lineText}\n`;
