@@ -13,7 +13,7 @@ body {
     align-items: flex-start;
     min-height: 100vh;
     margin: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */ /* 앱 외부 배경색 제거 */
     color: #2c3e50;
     padding: 25px 70px; /* 좌우 여백을 50px에서 70px로 대폭 확대 */
     line-height: 1.4;
@@ -41,17 +41,17 @@ body {
 }
 
 .ranking-btn {
-    background: linear-gradient(145deg, #FFD54F, #FFC107);
-    color: #424242;
+    background: linear-gradient(145deg, #A8D8F0, #87C4ED); /* 밝은 파랑 계열 */
+    color: #ffffff;
     padding: 8px 12px;
     border-radius: 8px;
     text-decoration: none;
     font-size: 0.75em;
     font-weight: 700;
     font-family: 'Noto Sans KR', sans-serif;
-    box-shadow: 0 3px 10px rgba(255, 193, 7, 0.4);
+    box-shadow: 0 3px 10px rgba(135, 196, 237, 0.4);
     transition: all 0.3s ease;
-    border: 2px solid #FFC107;
+    border: 2px solid #87C4ED;
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
@@ -60,10 +60,10 @@ body {
 }
 
 .ranking-btn:hover {
-    background: linear-gradient(145deg, #FFC107, #FF8F00);
+    background: linear-gradient(145deg, #87C4ED, #6BB0E1);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(255, 193, 7, 0.6);
-    border-color: #FF8F00;
+    box-shadow: 0 6px 16px rgba(135, 196, 237, 0.6);
+    border-color: #6BB0E1;
 }
 
 h1 {
@@ -193,9 +193,9 @@ h3 {
     flex: 1;
     min-width: 32px;
     padding: 6px 8px;
-    background: linear-gradient(145deg, #42A5F5, #2196F3); /* 산뜻한 파랑으로 변경 */
+    background: linear-gradient(145deg, #64B5F6, #42A5F5); /* 기존 밝은 파랑 유지 */
     color: white;
-    border: 2px solid #2196F3; /* 테두리도 산뜻한 파랑으로 */
+    border: 2px solid #42A5F5;
     border-radius: 6px;
     font-size: 0.75em;
     font-weight: 600;
@@ -205,11 +205,11 @@ h3 {
 }
 
 .quick-btn:hover {
-    background: linear-gradient(145deg, #2196F3, #1976D2); /* 호버시 약간 진한 파랑 */
+    background: linear-gradient(145deg, #42A5F5, #2196F3);
     color: white;
-    border-color: #1976D2;
+    border-color: #2196F3;
     transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(33, 150, 243, 0.4); /* 그림자도 산뜻한 파랑 계열로 */
+    box-shadow: 0 3px 8px rgba(66, 165, 245, 0.4);
 }
 
 .participants-buttons {
@@ -232,7 +232,7 @@ h3 {
     display: block;
     width: 100%;
     padding: 10px;
-    background: linear-gradient(145deg, #1976d2, #0d47a1);
+    background: linear-gradient(145deg, #4FC3F7, #29B6F6); /* 더 밝은 파랑으로 변경 */
     color: white;
     border: none;
     border-radius: 8px;
@@ -242,13 +242,13 @@ h3 {
     cursor: pointer;
     transition: all 0.3s ease;
     margin-top: 12px;
-    box-shadow: 0 6px 15px rgba(25, 118, 210, 0.3);
+    box-shadow: 0 6px 15px rgba(41, 182, 246, 0.3);
 }
 
 .main-button:hover {
-    background: linear-gradient(145deg, #0d47a1, #01579b);
+    background: linear-gradient(145deg, #29B6F6, #03A9F4);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(25, 118, 210, 0.4);
+    box-shadow: 0 8px 20px rgba(41, 182, 246, 0.4);
 }
 
 #calculateBtn {
@@ -287,17 +287,17 @@ h3 {
 }
 
 #shareKakao {
-    background: linear-gradient(145deg, #FEE500, #fada00);
-    color: #3C1E1E;
+    background: linear-gradient(145deg, #81D4FA, #4FC3F7); /* 밝은 파랑 계열로 변경 */
+    color: #ffffff;
     font-weight: 700;
     margin-top: 8px;
-    box-shadow: 0 6px 15px rgba(254, 229, 0, 0.3);
+    box-shadow: 0 6px 15px rgba(79, 195, 247, 0.3);
 }
 
 #shareKakao:hover {
-    background: linear-gradient(145deg, #fada00, #f4d100);
+    background: linear-gradient(145deg, #4FC3F7, #29B6F6);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(254, 229, 0, 0.4);
+    box-shadow: 0 8px 20px rgba(79, 195, 247, 0.4);
 }
 
 /* 계산기 스타일 */
@@ -361,36 +361,36 @@ h3 {
 }
 
 .calc-operator {
-    background: linear-gradient(145deg, #FF9800, #F57C00);
+    background: linear-gradient(145deg, #81D4FA, #4FC3F7); /* 밝은 파랑 계열 */
     color: white;
-    border-color: #F57C00;
+    border-color: #4FC3F7;
 }
 
 .calc-operator:hover {
-    background: linear-gradient(145deg, #F57C00, #E65100);
+    background: linear-gradient(145deg, #4FC3F7, #29B6F6);
     transform: translateY(-1px);
 }
 
 .calc-equals {
-    background: linear-gradient(145deg, #4CAF50, #388E3C);
+    background: linear-gradient(145deg, #81D4FA, #4FC3F7); /* 밝은 파랑 계열 */
     color: white;
-    border-color: #388E3C;
+    border-color: #4FC3F7;
     grid-row: span 2;
 }
 
 .calc-equals:hover {
-    background: linear-gradient(145deg, #388E3C, #2E7D32);
+    background: linear-gradient(145deg, #4FC3F7, #29B6F6);
     transform: translateY(-1px);
 }
 
 .calc-clear {
-    background: linear-gradient(145deg, #f44336, #d32f2f);
+    background: linear-gradient(145deg, #81D4FA, #4FC3F7); /* 밝은 파랑 계열 */
     color: white;
-    border-color: #d32f2f;
+    border-color: #4FC3F7;
 }
 
 .calc-clear:hover {
-    background: linear-gradient(145deg, #d32f2f, #c62828);
+    background: linear-gradient(145deg, #4FC3F7, #29B6F6);
     transform: translateY(-1px);
 }
 
