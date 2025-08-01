@@ -17,7 +17,7 @@ body {
     color: #2c3e50;
     padding: 25px 70px; /* 좌우 여백을 50px에서 70px로 대폭 확대 */
     line-height: 1.4;
-    font-size: 16px; /* 폰트 크기 14px -> 16px로 변경 */
+    font-size: 18px; /* 폰트 크기 16px -> 18px로 변경 */
 }
 
 .container {
@@ -41,17 +41,17 @@ body {
 }
 
 .ranking-btn {
-    background: linear-gradient(145deg, #A8D8F0, #87C4ED); /* 밝은 파랑 계열 */
-    color: #ffffff;
+    background: linear-gradient(145deg, #FFEB3B, #FFC107); /* 더 밝은 노란색으로 변경 */
+    color: #424242;
     padding: 8px 12px;
     border-radius: 8px;
     text-decoration: none;
     font-size: 0.75em;
     font-weight: 700;
     font-family: 'Noto Sans KR', sans-serif;
-    box-shadow: 0 3px 10px rgba(135, 196, 237, 0.4);
+    box-shadow: 0 3px 10px rgba(255, 235, 59, 0.4); /* 그림자도 밝게 */
     transition: all 0.3s ease;
-    border: 2px solid #87C4ED;
+    border: 2px solid #FFC107;
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
@@ -60,10 +60,10 @@ body {
 }
 
 .ranking-btn:hover {
-    background: linear-gradient(145deg, #87C4ED, #6BB0E1);
+    background: linear-gradient(145deg, #FFC107, #FFD54F); /* 호버시 더 밝은 노란색 */
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(135, 196, 237, 0.6);
-    border-color: #6BB0E1;
+    box-shadow: 0 6px 16px rgba(255, 193, 7, 0.6);
+    border-color: #FFD54F;
 }
 
 h1 {
@@ -193,9 +193,9 @@ h3 {
     flex: 1;
     min-width: 32px;
     padding: 6px 8px;
-    background: linear-gradient(145deg, #64B5F6, #42A5F5); /* 기존 밝은 파랑 유지 */
+    background: linear-gradient(145deg, #4DD0E1, #00BCD4); /* 더 상큼한 파란색 계열로 변경 */
     color: white;
-    border: 2px solid #42A5F5;
+    border: 2px solid #00BCD4; /* 테두리도 상큼한 파란색으로 */
     border-radius: 6px;
     font-size: 0.75em;
     font-weight: 600;
@@ -205,11 +205,11 @@ h3 {
 }
 
 .quick-btn:hover {
-    background: linear-gradient(145deg, #42A5F5, #2196F3);
+    background: linear-gradient(145deg, #00BCD4, #00ACC1); /* 호버시 약간 진한 파란색 */
     color: white;
-    border-color: #2196F3;
+    border-color: #00ACC1;
     transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(66, 165, 245, 0.4);
+    box-shadow: 0 3px 8px rgba(0, 188, 212, 0.4); /* 그림자도 파란색 계열로 */
 }
 
 .participants-buttons {
@@ -232,7 +232,7 @@ h3 {
     display: block;
     width: 100%;
     padding: 10px;
-    background: linear-gradient(145deg, #4FC3F7, #29B6F6); /* 더 밝은 파랑으로 변경 */
+    background: linear-gradient(145deg, #2196F3, #1976D2); /* 더 밝은 파랑으로 변경 */
     color: white;
     border: none;
     border-radius: 8px;
@@ -242,13 +242,13 @@ h3 {
     cursor: pointer;
     transition: all 0.3s ease;
     margin-top: 12px;
-    box-shadow: 0 6px 15px rgba(41, 182, 246, 0.3);
+    box-shadow: 0 6px 15px rgba(33, 150, 243, 0.3); /* 그림자도 밝게 */
 }
 
 .main-button:hover {
-    background: linear-gradient(145deg, #29B6F6, #03A9F4);
+    background: linear-gradient(145deg, #1976D2, #1565C0); /* 호버시 약간 진한 파랑 */
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(41, 182, 246, 0.4);
+    box-shadow: 0 8px 20px rgba(33, 150, 243, 0.4);
 }
 
 #calculateBtn {
@@ -287,17 +287,17 @@ h3 {
 }
 
 #shareKakao {
-    background: linear-gradient(145deg, #81D4FA, #4FC3F7); /* 밝은 파랑 계열로 변경 */
-    color: #ffffff;
+    background: linear-gradient(145deg, #FFEA00, #FFD600); /* 더 밝은 카카오 노란색으로 변경 */
+    color: #3C1E1E;
     font-weight: 700;
     margin-top: 8px;
-    box-shadow: 0 6px 15px rgba(79, 195, 247, 0.3);
+    box-shadow: 0 6px 15px rgba(255, 234, 0, 0.3); /* 그림자도 밝게 */
 }
 
 #shareKakao:hover {
-    background: linear-gradient(145deg, #4FC3F7, #29B6F6);
+    background: linear-gradient(145deg, #FFD600, #FFC107); /* 호버시 약간 진한 노랑 */
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(79, 195, 247, 0.4);
+    box-shadow: 0 8px 20px rgba(255, 234, 0, 0.4);
 }
 
 /* 계산기 스타일 */
@@ -361,36 +361,36 @@ h3 {
 }
 
 .calc-operator {
-    background: linear-gradient(145deg, #81D4FA, #4FC3F7); /* 밝은 파랑 계열 */
+    background: linear-gradient(145deg, #FFB74D, #FF9800); /* 더 밝은 주황색으로 변경 */
     color: white;
-    border-color: #4FC3F7;
+    border-color: #FF9800;
 }
 
 .calc-operator:hover {
-    background: linear-gradient(145deg, #4FC3F7, #29B6F6);
+    background: linear-gradient(145deg, #FF9800, #FB8C00); /* 호버시 약간 진한 주황 */
     transform: translateY(-1px);
 }
 
 .calc-equals {
-    background: linear-gradient(145deg, #81D4FA, #4FC3F7); /* 밝은 파랑 계열 */
+    background: linear-gradient(145deg, #66BB6A, #4CAF50); /* 더 밝은 초록색으로 변경 */
     color: white;
-    border-color: #4FC3F7;
+    border-color: #4CAF50;
     grid-row: span 2;
 }
 
 .calc-equals:hover {
-    background: linear-gradient(145deg, #4FC3F7, #29B6F6);
+    background: linear-gradient(145deg, #4CAF50, #43A047); /* 호버시 약간 진한 초록 */
     transform: translateY(-1px);
 }
 
 .calc-clear {
-    background: linear-gradient(145deg, #81D4FA, #4FC3F7); /* 밝은 파랑 계열 */
+    background: linear-gradient(145deg, #EF5350, #F44336); /* 더 밝은 빨간색으로 변경 */
     color: white;
-    border-color: #4FC3F7;
+    border-color: #F44336;
 }
 
 .calc-clear:hover {
-    background: linear-gradient(145deg, #4FC3F7, #29B6F6);
+    background: linear-gradient(145deg, #F44336, #E53935); /* 호버시 약간 진한 빨강 */
     transform: translateY(-1px);
 }
 
@@ -402,7 +402,7 @@ h3 {
 @media (max-width: 480px) {
     body {
         padding: 20px 45px; /* 모바일에서도 좌우 여백 대폭 확대 */
-        font-size: 15px; /* 폰트 크기 13px -> 15px로 변경 */
+        font-size: 17px; /* 폰트 크기 15px -> 17px로 변경 */
     }
 
     .container {
@@ -489,6 +489,7 @@ h3 {
 @media (max-width: 360px) {
     body {
         padding: 15px 35px; /* 소형 모바일에서도 여백 대폭 확보 */
+        font-size: 16px; /* 폰트 크기 16px로 조정 */
     }
 
     .container {
