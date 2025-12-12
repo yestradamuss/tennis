@@ -121,42 +121,28 @@
             </div>
 
             <div class="ball-section">
-                <div class="input-group">
-                    <label for="ballPrice">테니스공 가격:</label>
-                    <select id="ballPrice">
-                        <option value="3500" selected>3,500원</option>
-                        <option value="3600">3,600원</option>
-                        <option value="3700">3,700원</option>
-                        <option value="3800">3,800원</option>
-                        <option value="3900">3,900원</option>
-                        <option value="4000">4,000원</option>
-                    </select>
-                </div>
-                <div class="button-group">
-                    <button type="button" class="quick-btn" data-target="ballPrice" data-value="3500">3500</button>
-                    <button type="button" class="quick-btn" data-target="ballPrice" data-value="3600">3600</button>
-                    <button type="button" class="quick-btn" data-target="ballPrice" data-value="3700">3700</button>
-                    <button type="button" class="quick-btn" data-target="ballPrice" data-value="3800">3800</button>
-                    <button type="button" class="quick-btn" data-target="ballPrice" data-value="3900">3900</button>
-                    <button type="button" class="quick-btn" data-target="ballPrice" data-value="4000">4000</button>
-                </div>
-
-                <div class="input-group">
-                    <label for="ballProviderCount">테니스공 제공자수:</label>
-                    <select id="ballProviderCount">
-                        <option value="0">0명</option>
-                        <option value="1">1명</option>
-                        <option value="2">2명</option>
-                        <option value="3">3명</option>
-                        <option value="4">4명</option>
-                    </select>
-                </div>
-                <div class="button-group">
-                    <button type="button" class="quick-btn" data-target="ballProviderCount" data-value="0">0</button>
-                    <button type="button" class="quick-btn" data-target="ballProviderCount" data-value="1">1</button>
-                    <button type="button" class="quick-btn" data-target="ballProviderCount" data-value="2">2</button>
-                    <button type="button" class="quick-btn" data-target="ballProviderCount" data-value="3">3</button>
-                    <button type="button" class="quick-btn" data-target="ballProviderCount" data-value="4">4</button>
+                <div class="ball-row">
+                    <div class="input-group">
+                        <label for="ballPrice">테니스공 가격:</label>
+                        <select id="ballPrice">
+                            <option value="3500" selected>3,500원</option>
+                            <option value="3600">3,600원</option>
+                            <option value="3700">3,700원</option>
+                            <option value="3800">3,800원</option>
+                            <option value="3900">3,900원</option>
+                            <option value="4000">4,000원</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="ballProviderCount">제공자수:</label>
+                        <select id="ballProviderCount">
+                            <option value="0">0명</option>
+                            <option value="1">1명</option>
+                            <option value="2">2명</option>
+                            <option value="3">3명</option>
+                            <option value="4">4명</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div id="ballProviderDetails"></div>
@@ -179,9 +165,9 @@
             <button id="shareKakao" class="main-button">📱 카카오톡 공유</button>
         </div>
 
-        <!-- 계산기 섹션 추가 -->
-        <div class="calculator-section">
-            <h2>🧮 간단 계산기</h2>
+        <!-- 계산기 섹션 (접기) -->
+        <details class="calculator-section">
+            <summary class="calculator-summary">🧮 보조 계산기 (필요시 펼치기)</summary>
             <div class="calculator">
                 <div class="calculator-display">
                     <input type="text" id="calcDisplay" readonly placeholder="0">
@@ -191,27 +177,27 @@
                     <button class="calc-btn calc-operator" onclick="deleteLast()">⌫</button>
                     <button class="calc-btn calc-operator" onclick="appendToDisplay('/')">/</button>
                     <button class="calc-btn calc-operator" onclick="appendToDisplay('*')">×</button>
-                    
+
                     <button class="calc-btn calc-number" onclick="appendToDisplay('7')">7</button>
                     <button class="calc-btn calc-number" onclick="appendToDisplay('8')">8</button>
                     <button class="calc-btn calc-number" onclick="appendToDisplay('9')">9</button>
                     <button class="calc-btn calc-operator" onclick="appendToDisplay('-')">-</button>
-                    
+
                     <button class="calc-btn calc-number" onclick="appendToDisplay('4')">4</button>
                     <button class="calc-btn calc-number" onclick="appendToDisplay('5')">5</button>
                     <button class="calc-btn calc-number" onclick="appendToDisplay('6')">6</button>
                     <button class="calc-btn calc-operator" onclick="appendToDisplay('+')">+</button>
-                    
+
                     <button class="calc-btn calc-number" onclick="appendToDisplay('1')">1</button>
                     <button class="calc-btn calc-number" onclick="appendToDisplay('2')">2</button>
                     <button class="calc-btn calc-number" onclick="appendToDisplay('3')">3</button>
                     <button class="calc-btn calc-equals" onclick="calculateResult()" rowspan="2">=</button>
-                    
+
                     <button class="calc-btn calc-number calc-zero" onclick="appendToDisplay('0')">0</button>
                     <button class="calc-btn calc-number" onclick="appendToDisplay('.')">.</button>
                 </div>
             </div>
-        </div>
+        </details>
     </div>
 
     <script src="script.js"></script>

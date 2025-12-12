@@ -215,7 +215,7 @@ function updateCourtTypeSelectors() {
     const indoorCount = parseInt(indoorCourtCountSelect.value);
     const outdoorCount = parseInt(outdoorCourtCountSelect.value);
 
-    // 실내 코트 감면유형 선택 UI 생성
+    // 실내 코트 감면유형 선택 UI 생성 (드롭박스만)
     indoorCourtTypesDiv.innerHTML = '';
     for (let i = 1; i <= indoorCount; i++) {
         const typeDiv = document.createElement('div');
@@ -229,16 +229,11 @@ function updateCourtTypeSelectors() {
                     <option value="noDiscount">감면없음</option>
                 </select>
             </div>
-            <div class="button-group">
-                <button type="button" class="quick-btn" data-target="indoorCourt${i}Type" data-value="iksan">익산</button>
-                <button type="button" class="quick-btn" data-target="indoorCourt${i}Type" data-value="fiveDiscount">5대감면</button>
-                <button type="button" class="quick-btn" data-target="indoorCourt${i}Type" data-value="noDiscount">감면없음</button>
-            </div>
         `;
         indoorCourtTypesDiv.appendChild(typeDiv);
     }
 
-    // 실외 코트 감면유형 선택 UI 생성
+    // 실외 코트 감면유형 선택 UI 생성 (드롭박스만)
     outdoorCourtTypesDiv.innerHTML = '';
     for (let i = 1; i <= outdoorCount; i++) {
         const typeDiv = document.createElement('div');
@@ -252,17 +247,9 @@ function updateCourtTypeSelectors() {
                     <option value="noDiscount">감면없음</option>
                 </select>
             </div>
-            <div class="button-group">
-                <button type="button" class="quick-btn" data-target="outdoorCourt${i}Type" data-value="iksan">익산</button>
-                <button type="button" class="quick-btn" data-target="outdoorCourt${i}Type" data-value="fiveDiscount">5대감면</button>
-                <button type="button" class="quick-btn" data-target="outdoorCourt${i}Type" data-value="noDiscount">감면없음</button>
-            </div>
         `;
         outdoorCourtTypesDiv.appendChild(typeDiv);
     }
-
-    // 새로 생성된 버튼들에 이벤트 리스너 추가
-    attachQuickButtonListeners();
 }
 
 function updateBallProviderDetails() {
