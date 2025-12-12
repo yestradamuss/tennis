@@ -5,21 +5,32 @@ if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
 }
 
 // 데이터 정의
+// 감면 유형: iksan(익산시민), fiveDiscount(5대 법정감면), noDiscount(감면없음/외부인)
 const COURT_FEES = {
     OUTDOOR: {
-        weekday: { early: 3000, day: 3000, night: 4500 },
-        weekend: { early: 4000, day: 4000, night: 6000 }
+        // 조기/주간 (조명 미포함 코트비만)
+        dayTime: {
+            iksan: { weekday: 3000, weekend: 4000 },
+            fiveDiscount: { weekday: 1600, weekend: 2000 },
+            noDiscount: { weekday: 3800, weekend: 5000 }
+        },
+        // 야간 (코트비 + 조명비 4,000원 합산 금액)
+        night: {
+            iksan: { weekday: 8500, weekend: 10000 },
+            fiveDiscount: { weekday: 6300, weekend: 7000 },
+            noDiscount: { weekday: 10600, weekend: 12500 }
+        }
     },
     INDOOR: {
-        weekday: 6000,
-        weekend: 11000
+        // 실내는 항상 조명 포함 금액
+        iksan: { weekday: 10000, weekend: 15000 },
+        fiveDiscount: { weekday: 7000, weekend: 9500 },
+        noDiscount: { weekday: 12500, weekend: 18800 }
     }
 };
 
-const LIGHTING_FEES = {
-    OUTDOOR: { early: 4000, day: 0, night: 4000 },
-    INDOOR: 4000
-};
+// 실외 조기 시간대 조명비 (야간은 이미 요금에 포함)
+const LIGHTING_FEE = 4000;
 
 const MONTHLY_TIME_SLOTS = {
     1: { earlyStart: '05:00', earlyEnd: '08:00', dayStart: '08:00', dayEnd: '17:00', nightStart: '17:00', nightEnd: '22:00' },
@@ -52,17 +63,16 @@ const COURT_MANAGERS = [
     { name: '이창민', start: '2031-04-01', end: '2031-09-30' }
 ];
 
-const BALL_PRICE = 3500;
-
 // DOM 요소
 const usageDateInput = document.getElementById('usageDate');
 const startTimeSelect = document.getElementById('startTime');
 const endTimeSelect = document.getElementById('endTime');
 const indoorCourtCountSelect = document.getElementById('indoorCourtCount');
-const indoorDiscountCountSelect = document.getElementById('indoorDiscountCount');
 const outdoorCourtCountSelect = document.getElementById('outdoorCourtCount');
-const outdoorDiscountCountSelect = document.getElementById('outdoorDiscountCount');
+const indoorCourtTypesDiv = document.getElementById('indoorCourtTypes');
+const outdoorCourtTypesDiv = document.getElementById('outdoorCourtTypes');
 const totalParticipantsSelect = document.getElementById('totalParticipants');
+const ballPriceSelect = document.getElementById('ballPrice');
 const ballProviderCountSelect = document.getElementById('ballProviderCount');
 const ballProviderDetailsDiv = document.getElementById('ballProviderDetails');
 const calculateBtn = document.getElementById('calculateBtn');
@@ -200,6 +210,61 @@ function findCourtManager(dateString) {
     return '정보 없음';
 }
 
+// 코트별 감면유형 선택 UI 생성
+function updateCourtTypeSelectors() {
+    const indoorCount = parseInt(indoorCourtCountSelect.value);
+    const outdoorCount = parseInt(outdoorCourtCountSelect.value);
+
+    // 실내 코트 감면유형 선택 UI 생성
+    indoorCourtTypesDiv.innerHTML = '';
+    for (let i = 1; i <= indoorCount; i++) {
+        const typeDiv = document.createElement('div');
+        typeDiv.className = 'court-type-group';
+        typeDiv.innerHTML = `
+            <div class="input-group">
+                <label for="indoorCourt${i}Type">실내 코트 ${i} 감면유형:</label>
+                <select id="indoorCourt${i}Type">
+                    <option value="iksan" selected>익산시민</option>
+                    <option value="fiveDiscount">5대 법정감면</option>
+                    <option value="noDiscount">감면없음</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button type="button" class="quick-btn" data-target="indoorCourt${i}Type" data-value="iksan">익산</button>
+                <button type="button" class="quick-btn" data-target="indoorCourt${i}Type" data-value="fiveDiscount">5대감면</button>
+                <button type="button" class="quick-btn" data-target="indoorCourt${i}Type" data-value="noDiscount">감면없음</button>
+            </div>
+        `;
+        indoorCourtTypesDiv.appendChild(typeDiv);
+    }
+
+    // 실외 코트 감면유형 선택 UI 생성
+    outdoorCourtTypesDiv.innerHTML = '';
+    for (let i = 1; i <= outdoorCount; i++) {
+        const typeDiv = document.createElement('div');
+        typeDiv.className = 'court-type-group';
+        typeDiv.innerHTML = `
+            <div class="input-group">
+                <label for="outdoorCourt${i}Type">실외 코트 ${i} 감면유형:</label>
+                <select id="outdoorCourt${i}Type">
+                    <option value="iksan" selected>익산시민</option>
+                    <option value="fiveDiscount">5대 법정감면</option>
+                    <option value="noDiscount">감면없음</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button type="button" class="quick-btn" data-target="outdoorCourt${i}Type" data-value="iksan">익산</button>
+                <button type="button" class="quick-btn" data-target="outdoorCourt${i}Type" data-value="fiveDiscount">5대감면</button>
+                <button type="button" class="quick-btn" data-target="outdoorCourt${i}Type" data-value="noDiscount">감면없음</button>
+            </div>
+        `;
+        outdoorCourtTypesDiv.appendChild(typeDiv);
+    }
+
+    // 새로 생성된 버튼들에 이벤트 리스너 추가
+    attachQuickButtonListeners();
+}
+
 function updateBallProviderDetails() {
     const count = parseInt(ballProviderCountSelect.value);
     const indoorCount = parseInt(indoorCourtCountSelect.value);
@@ -256,9 +321,9 @@ function setDefaultValues() {
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
     const todayStr = `${year}-${month}-${day}`;
-    
+
     usageDateInput.value = todayStr;
-    
+
     // 평일/주말 상관없이 모든 경우에 동일한 기본값 설정
     if (isWeekend(todayStr)) {
         startTimeSelect.value = '06';
@@ -267,13 +332,14 @@ function setDefaultValues() {
         startTimeSelect.value = '10';
         endTimeSelect.value = '12';
     }
-    
-    // 항상 동일한 기본값: 실내 2개, 실내 감면 1개, 실외 0개, 실외 감면 0개
+
+    // 기본값: 실내 2개, 실외 0개
     indoorCourtCountSelect.value = '2';
-    indoorDiscountCountSelect.value = '1';
     outdoorCourtCountSelect.value = '0';
-    outdoorDiscountCountSelect.value = '0';
-    
+
+    // 코트별 감면유형 선택 UI 생성
+    updateCourtTypeSelectors();
+
     updateTotalParticipants();
     ballProviderCountSelect.value = '1';
     updateBallProviderDetails();
@@ -298,11 +364,12 @@ function attachQuickButtonListeners() {
             const targetElement = document.getElementById(targetId);
             if (targetElement) {
                 targetElement.value = value;
-                
+
                 // 특별한 경우 처리
                 if (targetId === 'ballProviderCount') {
                     updateBallProviderDetails();
                 } else if (targetId === 'indoorCourtCount' || targetId === 'outdoorCourtCount') {
+                    updateCourtTypeSelectors(); // 코트수 변경시 감면유형 UI 업데이트
                     updateTotalParticipants();
                     updateBallProviderDetails(); // 코트수 변경시 공 개수도 업데이트
                 }
@@ -316,11 +383,10 @@ function calculateFees() {
     const startHour = parseInt(startTimeSelect.value);
     const endHour = parseInt(endTimeSelect.value);
     const indoorCourtCount = parseInt(indoorCourtCountSelect.value);
-    const indoorDiscountCount = parseInt(indoorDiscountCountSelect.value);
     const outdoorCourtCount = parseInt(outdoorCourtCountSelect.value);
-    const outdoorDiscountCount = parseInt(outdoorDiscountCountSelect.value);
     const totalParticipants = parseInt(totalParticipantsSelect.value);
     const ballProviderCount = parseInt(ballProviderCountSelect.value);
+    const ballPrice = parseInt(ballPriceSelect.value);
 
     if (!usageDateStr) {
         alert('사용 날짜를 선택해주세요.');
@@ -332,59 +398,45 @@ function calculateFees() {
         return;
     }
 
-    if (indoorDiscountCount > indoorCourtCount) {
-        alert('실내 코트 감면대상수가 대여수를 초과할 수 없습니다.');
-        return;
-    }
-
-    if (outdoorDiscountCount > outdoorCourtCount) {
-        alert('실외 코트 감면대상수가 대여수를 초과할 수 없습니다.');
-        return;
-    }
-
     const selectedDate = new Date(usageDateStr);
     const month = selectedDate.getMonth() + 1;
     const isDayOff = isWeekend(usageDateStr);
-    const hours = endHour - startHour;
+    const dayType = isDayOff ? 'weekend' : 'weekday';
 
     let totalCourtFee = 0;
     let totalBallCost = 0;
 
-    // 실내 코트 계산
-    for (let i = 0; i < indoorCourtCount; i++) {
-        let courtFee = isDayOff ? COURT_FEES.INDOOR.weekend : COURT_FEES.INDOOR.weekday;
-        courtFee *= hours; // 시간당 요금 * 사용 시간
-        
-        if (i < indoorDiscountCount) {
-            courtFee *= 0.5; // 50% 할인
-        }
-        
-        totalCourtFee += courtFee;
-        totalCourtFee += LIGHTING_FEES.INDOOR * hours; // 조명료
+    // 실내 코트 계산 (조명 포함 요금표 사용)
+    for (let i = 1; i <= indoorCourtCount; i++) {
+        const courtTypeElement = document.getElementById(`indoorCourt${i}Type`);
+        const discountType = courtTypeElement ? courtTypeElement.value : 'iksan';
+
+        // 실내는 시간에 관계없이 동일 요금 (조명 포함)
+        const hourlyFee = COURT_FEES.INDOOR[discountType][dayType];
+        const hours = endHour - startHour;
+        totalCourtFee += hourlyFee * hours;
     }
 
     // 실외 코트 계산
-    for (let i = 0; i < outdoorCourtCount; i++) {
-        let courtFee = 0;
-        let lightingFee = 0;
-        
+    for (let i = 1; i <= outdoorCourtCount; i++) {
+        const courtTypeElement = document.getElementById(`outdoorCourt${i}Type`);
+        const discountType = courtTypeElement ? courtTypeElement.value : 'iksan';
+
         for (let h = startHour; h < endHour; h++) {
             const timeCategory = getTimeCategory(month, h);
             if (timeCategory) {
-                const hourlyCourtFee = isDayOff ? 
-                    COURT_FEES.OUTDOOR.weekend[timeCategory] : 
-                    COURT_FEES.OUTDOOR.weekday[timeCategory];
-                
-                courtFee += hourlyCourtFee;
-                lightingFee += LIGHTING_FEES.OUTDOOR[timeCategory];
+                if (timeCategory === 'night') {
+                    // 야간: 요금표에 조명비 포함
+                    totalCourtFee += COURT_FEES.OUTDOOR.night[discountType][dayType];
+                } else if (timeCategory === 'early') {
+                    // 조기: 주간 코트비 + 조명비 4,000원
+                    totalCourtFee += COURT_FEES.OUTDOOR.dayTime[discountType][dayType] + LIGHTING_FEE;
+                } else {
+                    // 주간: 코트비만
+                    totalCourtFee += COURT_FEES.OUTDOOR.dayTime[discountType][dayType];
+                }
             }
         }
-        
-        if (i < outdoorDiscountCount) {
-            courtFee *= 0.5; // 50% 할인
-        }
-        
-        totalCourtFee += courtFee + lightingFee;
     }
 
     // 테니스공 비용 계산
@@ -392,7 +444,7 @@ function calculateFees() {
         const ballCountElement = document.getElementById(`ballProvider${i}Count`);
         if (ballCountElement) {
             const ballCount = parseInt(ballCountElement.value);
-            totalBallCost += ballCount * BALL_PRICE;
+            totalBallCost += ballCount * ballPrice;
         }
     }
 
@@ -417,7 +469,7 @@ function calculateFees() {
             const ballCountElement = document.getElementById(`ballProvider${i}Count`);
             if (ballCountElement) {
                 const ballCount = parseInt(ballCountElement.value);
-                const ballCost = ballCount * BALL_PRICE;
+                const ballCost = ballCount * ballPrice;
                 let refund = ballCost - regularParticipantAmount;
                 
                 const ballProviderP = document.createElement('p');
@@ -504,9 +556,8 @@ usageDateInput.addEventListener('change', (event) => {
     }
     // 평일/주말 상관없이 모두 동일한 코트 설정
     indoorCourtCountSelect.value = '2';
-    indoorDiscountCountSelect.value = '1';
     outdoorCourtCountSelect.value = '0';
-    outdoorDiscountCountSelect.value = '0';
+    updateCourtTypeSelectors();
     updateTotalParticipants();
     updateBallProviderDetails();
 });
@@ -518,12 +569,14 @@ startTimeSelect.addEventListener('change', (event) => {
     endTimeSelect.value = String(endHour).padStart(2, '0');
 });
 
-// 코트 수 변경 시 공 제공자 세부사항도 업데이트
+// 코트 수 변경 시 감면유형 UI, 인원, 공 제공자 세부사항 업데이트
 indoorCourtCountSelect.addEventListener('change', () => {
+    updateCourtTypeSelectors();
     updateTotalParticipants();
     updateBallProviderDetails();
 });
 outdoorCourtCountSelect.addEventListener('change', () => {
+    updateCourtTypeSelectors();
     updateTotalParticipants();
     updateBallProviderDetails();
 });

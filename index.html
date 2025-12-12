@@ -59,25 +59,8 @@
                     </div>
                 </div>
 
-                <div class="court-group">
-                    <div class="input-group">
-                        <label for="indoorDiscountCount">실내 코트 감면대상수:</label>
-                        <select id="indoorDiscountCount">
-                            <option value="0">0개</option>
-                            <option value="1">1개</option>
-                            <option value="2">2개</option>
-                            <option value="3">3개</option>
-                            <option value="4">4개</option>
-                        </select>
-                    </div>
-                    <div class="button-group">
-                        <button type="button" class="quick-btn" data-target="indoorDiscountCount" data-value="0">0</button>
-                        <button type="button" class="quick-btn" data-target="indoorDiscountCount" data-value="1">1</button>
-                        <button type="button" class="quick-btn" data-target="indoorDiscountCount" data-value="2">2</button>
-                        <button type="button" class="quick-btn" data-target="indoorDiscountCount" data-value="3">3</button>
-                        <button type="button" class="quick-btn" data-target="indoorDiscountCount" data-value="4">4</button>
-                    </div>
-                </div>
+                <!-- 실내 코트별 감면유형 선택 (동적 생성) -->
+                <div id="indoorCourtTypes"></div>
 
                 <div class="court-group">
                     <div class="input-group">
@@ -99,25 +82,8 @@
                     </div>
                 </div>
 
-                <div class="court-group">
-                    <div class="input-group">
-                        <label for="outdoorDiscountCount">실외 코트 감면대상수:</label>
-                        <select id="outdoorDiscountCount">
-                            <option value="0">0개</option>
-                            <option value="1">1개</option>
-                            <option value="2">2개</option>
-                            <option value="3">3개</option>
-                            <option value="4">4개</option>
-                        </select>
-                    </div>
-                    <div class="button-group">
-                        <button type="button" class="quick-btn" data-target="outdoorDiscountCount" data-value="0">0</button>
-                        <button type="button" class="quick-btn" data-target="outdoorDiscountCount" data-value="1">1</button>
-                        <button type="button" class="quick-btn" data-target="outdoorDiscountCount" data-value="2">2</button>
-                        <button type="button" class="quick-btn" data-target="outdoorDiscountCount" data-value="3">3</button>
-                        <button type="button" class="quick-btn" data-target="outdoorDiscountCount" data-value="4">4</button>
-                    </div>
-                </div>
+                <!-- 실외 코트별 감면유형 선택 (동적 생성) -->
+                <div id="outdoorCourtTypes"></div>
             </div>
 
             <h3>👥 인원 정보</h3>
@@ -155,6 +121,26 @@
             </div>
 
             <div class="ball-section">
+                <div class="input-group">
+                    <label for="ballPrice">테니스공 가격:</label>
+                    <select id="ballPrice">
+                        <option value="3500" selected>3,500원</option>
+                        <option value="3600">3,600원</option>
+                        <option value="3700">3,700원</option>
+                        <option value="3800">3,800원</option>
+                        <option value="3900">3,900원</option>
+                        <option value="4000">4,000원</option>
+                    </select>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="quick-btn" data-target="ballPrice" data-value="3500">3500</button>
+                    <button type="button" class="quick-btn" data-target="ballPrice" data-value="3600">3600</button>
+                    <button type="button" class="quick-btn" data-target="ballPrice" data-value="3700">3700</button>
+                    <button type="button" class="quick-btn" data-target="ballPrice" data-value="3800">3800</button>
+                    <button type="button" class="quick-btn" data-target="ballPrice" data-value="3900">3900</button>
+                    <button type="button" class="quick-btn" data-target="ballPrice" data-value="4000">4000</button>
+                </div>
+
                 <div class="input-group">
                     <label for="ballProviderCount">테니스공 제공자수:</label>
                     <select id="ballProviderCount">
