@@ -5,17 +5,142 @@
     padding: 0;
 }
 
+/* ========================================
+   히어로 섹션 (Tennis Life Balance)
+======================================== */
+.hero-section {
+    width: 100%;
+    max-width: 380px;  /* 계산기 카드와 동일한 폭 */
+    height: 120px;  /* 서브라벨 추가로 높이 증가 */
+    background: #1b5e20;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin: 10px auto 0 auto;  /* 상단 10px, 하단 0 */
+    border-radius: 15px;  /* 상하좌우 동일한 곡률 */
+    padding: 20px 16px;  /* 내부 패딩 */
+}
+
+/* 테니스 코트 라인 패턴 */
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.3) 49%, rgba(255,255,255,0.3) 51%, transparent 51%),
+        linear-gradient(0deg, transparent 49%, rgba(255,255,255,0.3) 49%, rgba(255,255,255,0.3) 51%, transparent 51%);
+    background-size: 100% 100%;
+}
+
+.hero-section::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    border: 3px solid rgba(255,255,255,0.4);
+    border-radius: 4px;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 22px;  /* 모바일 최적화 수치 */
+    line-height: 28px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    letter-spacing: -0.2px;
+}
+
+.hero-subtitle {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: #D9F2E4;  /* 연한 그린 */
+    margin-top: 4px;
+}
+
+.hero-ranking-btn {
+    position: absolute;
+    right: 15px;
+    bottom: 12px;
+    background: rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.9);
+    padding: 5px 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'Noto Sans KR', sans-serif;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.hero-ranking-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.05);
+}
+
+@media (max-width: 480px) {
+    .hero-section {
+        height: 100px;  /* 모바일에서 충분한 높이 */
+        padding: 15px 12px;
+    }
+
+    .hero-title {
+        font-size: 18px;
+        line-height: 24px;
+    }
+
+    .hero-subtitle {
+        font-size: 12px;
+        line-height: 18px;
+    }
+
+    .hero-ranking-btn {
+        font-size: 10px;
+        padding: 4px 10px;
+        right: 10px;
+        bottom: 8px;
+    }
+
+    .hero-section::after {
+        top: 6px;
+        left: 6px;
+        right: 6px;
+        bottom: 6px;
+        border-width: 2px;
+    }
+}
+
+/* ======================================== */
+
 body {
     font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
     font-weight: 500;
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
     min-height: 100vh;
     margin: 0;
     /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */ /* 앱 외부 배경색 제거 */
     color: #2c3e50;
-    padding: 25px 70px; /* 좌우 여백을 50px에서 70px로 대폭 확대 */
+    padding: 0;
     line-height: 1.4;
     font-size: 18px; /* 폰트 크기 16px -> 18px로 변경 */
 }
@@ -29,6 +154,8 @@ body {
     max-width: 380px; /* 420px에서 다시 380px로 조정하여 좌우 여백 강조 */
     backdrop-filter: blur(10px);
     position: relative;
+    margin: 5px 70px 25px 70px; /* 히어로와 바짝 붙임 */
+    border-top: 3px solid #2e7d32;  /* C: 그린 상단 보더 - 히어로와 색 연결 */
 }
 
 .header {
@@ -67,7 +194,7 @@ body {
 }
 
 h1 {
-    color: #42A5F5;
+    color: #2e7d32;  /* 그린으로 변경 - 히어로와 색 연결 */
     margin: 0;
     font-size: 1.3em;
     font-weight: 800;
@@ -620,5 +747,241 @@ details.calculator-section[open] {
     .calculator-display input {
         padding: 8px;
         font-size: 1.0em;
+    }
+}
+
+/* 시간×코트 매트릭스 스타일 */
+.slot-matrix-section {
+    margin-top: 15px;
+    padding: 10px;
+    border: 2px solid #E0E0E0;
+    border-radius: 10px;
+    background: linear-gradient(145deg, #FAFAFA, #F5F5F5);
+}
+
+.slot-matrix-summary {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #757575;
+    cursor: pointer;
+    padding: 5px 0;
+    list-style: none;
+}
+
+.slot-matrix-summary::-webkit-details-marker {
+    display: none;
+}
+
+.slot-matrix-summary::before {
+    content: "▶ ";
+    font-size: 0.8em;
+}
+
+details.slot-matrix-section[open] .slot-matrix-summary::before {
+    content: "▼ ";
+}
+
+.slot-matrix {
+    margin-top: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.matrix-row {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.matrix-row.matrix-header {
+    font-weight: 600;
+    font-size: 0.8em;
+    color: #424242;
+}
+
+.matrix-cell {
+    min-width: 70px;
+    text-align: center;
+    padding: 3px;
+}
+
+.matrix-cell.matrix-label {
+    min-width: 55px;
+    font-weight: 600;
+    font-size: 0.75em;
+    color: #424242;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.matrix-cell.time-header {
+    font-size: 0.75em;
+    font-weight: 600;
+    color: #1976D2;
+    background: linear-gradient(145deg, #E3F2FD, #BBDEFB);
+    border-radius: 5px;
+    padding: 5px 3px;
+}
+
+.slot-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.slot-cell select {
+    font-size: 0.7em;
+    padding: 4px 3px;
+    border: 1px solid #BDBDBD;
+    border-radius: 4px;
+    background-color: #ffffff;
+    font-weight: 500;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+}
+
+.slot-cell select:focus {
+    outline: none;
+    border-color: #42A5F5;
+    box-shadow: 0 0 0 2px rgba(66, 165, 245, 0.2);
+}
+
+.slot-location {
+    background: linear-gradient(145deg, #E8F5E9, #C8E6C9) !important;
+    border-color: #81C784 !important;
+}
+
+.slot-discount {
+    background: linear-gradient(145deg, #FFF3E0, #FFE0B2) !important;
+    border-color: #FFB74D !important;
+}
+
+.matrix-empty {
+    font-size: 0.8em;
+    color: #9E9E9E;
+    text-align: center;
+    padding: 15px;
+}
+
+.preset-buttons {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.preset-btn {
+    flex: 1;
+    min-width: 80px;
+    padding: 6px 10px;
+    font-size: 0.7em;
+    font-weight: 600;
+    font-family: 'Noto Sans KR', sans-serif;
+    background: linear-gradient(145deg, #E3F2FD, #BBDEFB);
+    color: #1565C0;
+    border: 1px solid #42A5F5;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.preset-btn:hover {
+    background: linear-gradient(145deg, #BBDEFB, #90CAF9);
+    transform: translateY(-1px);
+}
+
+/* 슬롯별 상세 내역 스타일 */
+.slot-details {
+    margin-bottom: 10px;
+}
+
+.court-detail {
+    margin-bottom: 8px;
+    padding: 8px;
+    background: linear-gradient(145deg, #ffffff, #f5f5f5);
+    border-radius: 8px;
+    border-left: 3px solid #1976D2;
+}
+
+.court-detail .court-label {
+    font-size: 0.85em;
+    color: #1565C0;
+    margin-bottom: 5px;
+    padding: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+.court-detail .slot-item {
+    font-size: 0.8em;
+    color: #424242;
+    margin-bottom: 3px;
+    padding: 4px 8px;
+    background: linear-gradient(145deg, #FAFAFA, #F5F5F5);
+    border-radius: 4px;
+    border: none;
+    box-shadow: none;
+}
+
+.court-detail .slot-item .slot-price {
+    font-weight: 700;
+    color: #2E7D32;
+}
+
+/* 반응형 - 매트릭스 */
+@media (max-width: 480px) {
+    .slot-matrix-section {
+        padding: 8px;
+    }
+
+    .matrix-cell {
+        min-width: 60px;
+    }
+
+    .matrix-cell.matrix-label {
+        min-width: 45px;
+        font-size: 0.7em;
+    }
+
+    .matrix-cell.time-header {
+        font-size: 0.7em;
+        padding: 4px 2px;
+    }
+
+    .slot-cell select {
+        font-size: 0.65em;
+        padding: 3px 2px;
+    }
+
+    .preset-btn {
+        font-size: 0.65em;
+        padding: 5px 8px;
+        min-width: 70px;
+    }
+
+    .court-detail .slot-item {
+        font-size: 0.75em;
+    }
+}
+
+@media (max-width: 360px) {
+    .matrix-cell {
+        min-width: 55px;
+    }
+
+    .matrix-cell.matrix-label {
+        min-width: 40px;
+        font-size: 0.65em;
+    }
+
+    .slot-cell select {
+        font-size: 0.6em;
+    }
+
+    .preset-btn {
+        font-size: 0.6em;
+        min-width: 60px;
     }
 }

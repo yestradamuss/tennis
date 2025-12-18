@@ -11,12 +11,16 @@
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🎾 테니스 코트비 계산기</h1>
-            <a href="https://script.google.com/macros/s/AKfycbzK0WSHt8v7Fep25FSKPyEpww3XYIqRMmr54Op1oEIYqjAwLSiucyasz2xo8bbgHCgHnQ/exec" target="_blank" class="ranking-btn">랭킹보드</a>
+    <!-- 히어로 섹션 -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <div class="hero-title">Tennis Life Balance</div>
+            <div class="hero-subtitle">테니스 코트비 계산기</div>
         </div>
+        <a href="https://script.google.com/macros/s/AKfycbzK0WSHt8v7Fep25FSKPyEpww3XYIqRMmr54Op1oEIYqjAwLSiucyasz2xo8bbgHCgHnQ/exec" target="_blank" class="hero-ranking-btn">랭킹보드</a>
+    </div>
 
+    <div class="container">
         <div class="input-section">
             <h3>📅 날짜 및 시간 정보</h3>
             
@@ -59,9 +63,6 @@
                     </div>
                 </div>
 
-                <!-- 실내 코트별 감면유형 선택 (동적 생성) -->
-                <div id="indoorCourtTypes"></div>
-
                 <div class="court-group">
                     <div class="input-group">
                         <label for="outdoorCourtCount">실외 코트 대여수:</label>
@@ -82,8 +83,11 @@
                     </div>
                 </div>
 
-                <!-- 실외 코트별 감면유형 선택 (동적 생성) -->
-                <div id="outdoorCourtTypes"></div>
+                <!-- 시간×코트 매트릭스 UI (접힘) -->
+                <details class="slot-matrix-section">
+                    <summary class="slot-matrix-summary">시간대별 / 코트별 상세 설정 (필요시 펼치기)</summary>
+                    <div id="slotMatrix"></div>
+                </details>
             </div>
 
             <h3>👥 인원 정보</h3>
@@ -154,6 +158,8 @@
         <div class="result-section">
             <h2>📊 계산 결과</h2>
             <div id="results">
+                <!-- 슬롯별 상세 내역 -->
+                <div id="slotDetails"></div>
                 <p>🏟️ <strong>총 코트 대여료:</strong> <span id="totalCourtRentalDisplayFee">0원</span></p>
                 <p>🥎 <strong>총 테니스 비용 (공 포함):</strong> <span id="totalTennisCost">0원</span></p>
                 <p>💰 <strong>1. 일반 참가자 송금액:</strong> <span id="regularParticipantAmount">0원</span></p>

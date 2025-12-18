@@ -32,6 +32,9 @@ const COURT_FEES = {
 // 실외 조기 시간대 조명비 (야간은 이미 요금에 포함)
 const LIGHTING_FEE = 4000;
 
+// 슬롯 데이터 저장
+let currentSlots = [];
+
 const MONTHLY_TIME_SLOTS = {
     1: { earlyStart: '05:00', earlyEnd: '08:00', dayStart: '08:00', dayEnd: '17:00', nightStart: '17:00', nightEnd: '22:00' },
     2: { earlyStart: '05:00', earlyEnd: '07:00', dayStart: '07:00', dayEnd: '18:00', nightStart: '18:00', nightEnd: '22:00' },
@@ -69,8 +72,8 @@ const startTimeSelect = document.getElementById('startTime');
 const endTimeSelect = document.getElementById('endTime');
 const indoorCourtCountSelect = document.getElementById('indoorCourtCount');
 const outdoorCourtCountSelect = document.getElementById('outdoorCourtCount');
-const indoorCourtTypesDiv = document.getElementById('indoorCourtTypes');
-const outdoorCourtTypesDiv = document.getElementById('outdoorCourtTypes');
+const slotMatrixDiv = document.getElementById('slotMatrix');
+const slotDetailsDiv = document.getElementById('slotDetails');
 const totalParticipantsSelect = document.getElementById('totalParticipants');
 const ballPriceSelect = document.getElementById('ballPrice');
 const ballProviderCountSelect = document.getElementById('ballProviderCount');
@@ -193,6 +196,54 @@ function getTimeCategory(month, hour) {
     return null;
 }
 
+// 슬롯 생성 함수: 기존 실내/실외 코트 수를 힌트로 활용
+function generateSlots(startHour, endHour, indoorCount, outdoorCount) {
+    const slots = [];
+    const totalCourts = indoorCount + outdoorCount;
+
+    for (let courtIndex = 0; courtIndex < totalCourts; courtIndex++) {
+        // 기본값: 처음 indoorCount개는 실내, 나머지는 실외
+        const defaultLocation = courtIndex < indoorCount ? 'INDOOR' : 'OUTDOOR';
+        // 감면유형 기본값: 첫 번째 코트는 법정감면(fiveDiscount), 나머지는 감면없음(noDiscount)
+        const defaultDiscountType = courtIndex === 0 ? 'fiveDiscount' : 'noDiscount';
+
+        for (let hour = startHour; hour < endHour; hour++) {
+            slots.push({
+                courtIndex: courtIndex,
+                startHour: hour,
+                endHour: hour + 1,
+                location: defaultLocation,
+                discountType: defaultDiscountType,
+                price: 0
+            });
+        }
+    }
+    return slots;
+}
+
+// 슬롯별 요금 계산 함수
+function calculateSlotPrice(slot, month, dayType) {
+    const timeCategory = getTimeCategory(month, slot.startHour);
+    if (!timeCategory) return 0;
+
+    if (slot.location === 'INDOOR') {
+        // 실내는 시간에 관계없이 동일 요금 (조명 포함)
+        return COURT_FEES.INDOOR[slot.discountType][dayType];
+    } else {
+        // 실외
+        if (timeCategory === 'night') {
+            // 야간: 요금표에 조명비 포함
+            return COURT_FEES.OUTDOOR.night[slot.discountType][dayType];
+        } else if (timeCategory === 'early') {
+            // 조기: 주간 코트비 + 조명비 4,000원
+            return COURT_FEES.OUTDOOR.dayTime[slot.discountType][dayType] + LIGHTING_FEE;
+        } else {
+            // 주간: 코트비만
+            return COURT_FEES.OUTDOOR.dayTime[slot.discountType][dayType];
+        }
+    }
+}
+
 function findCourtManager(dateString) {
     const targetDate = new Date(dateString);
     targetDate.setHours(0, 0, 0, 0);
@@ -210,46 +261,202 @@ function findCourtManager(dateString) {
     return '정보 없음';
 }
 
-// 코트별 감면유형 선택 UI 생성
-function updateCourtTypeSelectors() {
+// 시간×코트 매트릭스 UI 생성
+function updateSlotMatrix() {
+    const startHour = parseInt(startTimeSelect.value);
+    const endHour = parseInt(endTimeSelect.value);
     const indoorCount = parseInt(indoorCourtCountSelect.value);
     const outdoorCount = parseInt(outdoorCourtCountSelect.value);
+    const totalCourts = indoorCount + outdoorCount;
 
-    // 실내 코트 감면유형 선택 UI 생성 (드롭박스만)
-    indoorCourtTypesDiv.innerHTML = '';
-    for (let i = 1; i <= indoorCount; i++) {
-        const typeDiv = document.createElement('div');
-        typeDiv.className = 'court-type-group';
-        typeDiv.innerHTML = `
-            <div class="input-group">
-                <label for="indoorCourt${i}Type">실내 코트 ${i} 감면유형:</label>
-                <select id="indoorCourt${i}Type">
-                    <option value="iksan" selected>익산시민</option>
-                    <option value="fiveDiscount">5대 법정감면</option>
-                    <option value="noDiscount">감면없음</option>
-                </select>
-            </div>
-        `;
-        indoorCourtTypesDiv.appendChild(typeDiv);
+    if (totalCourts === 0 || endHour <= startHour) {
+        slotMatrixDiv.innerHTML = '<p class="matrix-empty">코트를 선택하면 상세 설정이 나타납니다.</p>';
+        currentSlots = [];
+        return;
     }
 
-    // 실외 코트 감면유형 선택 UI 생성 (드롭박스만)
-    outdoorCourtTypesDiv.innerHTML = '';
-    for (let i = 1; i <= outdoorCount; i++) {
-        const typeDiv = document.createElement('div');
-        typeDiv.className = 'court-type-group';
-        typeDiv.innerHTML = `
-            <div class="input-group">
-                <label for="outdoorCourt${i}Type">실외 코트 ${i} 감면유형:</label>
-                <select id="outdoorCourt${i}Type">
-                    <option value="iksan" selected>익산시민</option>
-                    <option value="fiveDiscount">5대 법정감면</option>
-                    <option value="noDiscount">감면없음</option>
-                </select>
-            </div>
-        `;
-        outdoorCourtTypesDiv.appendChild(typeDiv);
+    // 슬롯 데이터 생성
+    currentSlots = generateSlots(startHour, endHour, indoorCount, outdoorCount);
+
+    // 매트릭스 UI 생성
+    let html = '<div class="slot-matrix">';
+
+    // 헤더 행 (시간 슬롯)
+    html += '<div class="matrix-row matrix-header">';
+    html += '<div class="matrix-cell matrix-label"></div>'; // 빈 셀 (코트 레이블 위치)
+    for (let hour = startHour; hour < endHour; hour++) {
+        html += `<div class="matrix-cell time-header">${String(hour).padStart(2, '0')}-${String(hour + 1).padStart(2, '0')}</div>`;
     }
+    html += '</div>';
+
+    // 코트별 행
+    for (let courtIndex = 0; courtIndex < totalCourts; courtIndex++) {
+        const isIndoor = courtIndex < indoorCount;
+        const courtLabel = isIndoor
+            ? `실내 ${courtIndex + 1}`
+            : `실외 ${courtIndex - indoorCount + 1}`;
+        const defaultLocation = isIndoor ? 'INDOOR' : 'OUTDOOR';
+        // 감면유형 기본값: 첫 번째 코트는 법정감면(fiveDiscount), 나머지는 감면없음(noDiscount)
+        const defaultDiscountType = courtIndex === 0 ? 'fiveDiscount' : 'noDiscount';
+
+        html += '<div class="matrix-row">';
+        html += `<div class="matrix-cell matrix-label">${courtLabel}</div>`;
+
+        for (let hour = startHour; hour < endHour; hour++) {
+            const slotId = `slot_${courtIndex}_${hour}`;
+            html += `
+                <div class="matrix-cell slot-cell">
+                    <select id="${slotId}_location" class="slot-location" data-court="${courtIndex}" data-hour="${hour}">
+                        <option value="INDOOR" ${defaultLocation === 'INDOOR' ? 'selected' : ''}>실내</option>
+                        <option value="OUTDOOR" ${defaultLocation === 'OUTDOOR' ? 'selected' : ''}>실외</option>
+                    </select>
+                    <select id="${slotId}_discount" class="slot-discount" data-court="${courtIndex}" data-hour="${hour}">
+                        <option value="iksan" ${defaultDiscountType === 'iksan' ? 'selected' : ''}>익산</option>
+                        <option value="fiveDiscount" ${defaultDiscountType === 'fiveDiscount' ? 'selected' : ''}>5대감면</option>
+                        <option value="noDiscount" ${defaultDiscountType === 'noDiscount' ? 'selected' : ''}>감면없음</option>
+                    </select>
+                </div>
+            `;
+        }
+        html += '</div>';
+    }
+
+    html += '</div>';
+
+    // 프리셋 버튼
+    html += `
+        <div class="preset-buttons">
+            <button type="button" class="preset-btn" onclick="applyPreset('all-indoor')">전체 실내</button>
+            <button type="button" class="preset-btn" onclick="applyPreset('all-outdoor')">전체 실외</button>
+            <button type="button" class="preset-btn" onclick="applyPreset('all-iksan')">전체 익산시민</button>
+        </div>
+    `;
+
+    slotMatrixDiv.innerHTML = html;
+}
+
+// 프리셋 적용 함수
+function applyPreset(preset) {
+    const locationSelects = document.querySelectorAll('.slot-location');
+    const discountSelects = document.querySelectorAll('.slot-discount');
+
+    switch(preset) {
+        case 'all-indoor':
+            locationSelects.forEach(select => select.value = 'INDOOR');
+            break;
+        case 'all-outdoor':
+            locationSelects.forEach(select => select.value = 'OUTDOOR');
+            break;
+        case 'all-iksan':
+            discountSelects.forEach(select => select.value = 'iksan');
+            break;
+    }
+}
+
+// 슬롯별 상세 내역 표시
+function displaySlotDetails(slots, indoorCount, month) {
+    if (!slotDetailsDiv) return;
+
+    // 코트별로 슬롯 그룹화
+    const courtGroups = {};
+    slots.forEach(slot => {
+        if (!courtGroups[slot.courtIndex]) {
+            courtGroups[slot.courtIndex] = [];
+        }
+        courtGroups[slot.courtIndex].push(slot);
+    });
+
+    let html = '<div class="slot-details">';
+
+    Object.keys(courtGroups).forEach(courtIndex => {
+        const courtSlots = courtGroups[courtIndex];
+        const courtIndexNum = parseInt(courtIndex);
+        const isIndoor = courtIndexNum < indoorCount;
+        const courtLabel = isIndoor
+            ? `실내 ${courtIndexNum + 1}`
+            : `실외 ${courtIndexNum - indoorCount + 1}`;
+
+        html += `<div class="court-detail">`;
+        html += `<p class="court-label"><strong>🏟️ ${courtLabel}</strong></p>`;
+
+        // 연속된 동일 설정 슬롯 병합
+        let mergedSlots = [];
+        let currentMerge = null;
+
+        courtSlots.forEach((slot, idx) => {
+            if (currentMerge === null) {
+                currentMerge = { ...slot, endHour: slot.endHour };
+            } else if (
+                currentMerge.location === slot.location &&
+                currentMerge.discountType === slot.discountType &&
+                currentMerge.endHour === slot.startHour
+            ) {
+                // 병합 가능
+                currentMerge.endHour = slot.endHour;
+                currentMerge.price += slot.price;
+            } else {
+                mergedSlots.push(currentMerge);
+                currentMerge = { ...slot, endHour: slot.endHour };
+            }
+
+            if (idx === courtSlots.length - 1) {
+                mergedSlots.push(currentMerge);
+            }
+        });
+
+        mergedSlots.forEach(slot => {
+            const locationText = slot.location === 'INDOOR' ? '실내' : '실외';
+            const discountText = slot.discountType === 'iksan' ? '익산시민'
+                : slot.discountType === 'fiveDiscount' ? '5대감면' : '감면없음';
+            const timeCategory = getTimeCategory(month, slot.startHour);
+            const timeCategoryText = timeCategory === 'early' ? '조기'
+                : timeCategory === 'night' ? '야간' : '주간';
+
+            html += `<p class="slot-item">- ${String(slot.startHour).padStart(2, '0')}:00-${String(slot.endHour).padStart(2, '0')}:00 ${locationText} (${discountText}${slot.location === 'OUTDOOR' ? ', ' + timeCategoryText : ''}) <span class="slot-price">${slot.price.toLocaleString()}원</span></p>`;
+        });
+
+        html += `</div>`;
+    });
+
+    html += '</div>';
+    slotDetailsDiv.innerHTML = html;
+}
+
+// 매트릭스에서 슬롯 데이터 수집
+function collectSlotsFromMatrix() {
+    const startHour = parseInt(startTimeSelect.value);
+    const endHour = parseInt(endTimeSelect.value);
+    const indoorCount = parseInt(indoorCourtCountSelect.value);
+    const outdoorCount = parseInt(outdoorCourtCountSelect.value);
+    const totalCourts = indoorCount + outdoorCount;
+
+    const slots = [];
+
+    for (let courtIndex = 0; courtIndex < totalCourts; courtIndex++) {
+        for (let hour = startHour; hour < endHour; hour++) {
+            const slotId = `slot_${courtIndex}_${hour}`;
+            const locationSelect = document.getElementById(`${slotId}_location`);
+            const discountSelect = document.getElementById(`${slotId}_discount`);
+
+            // 매트릭스 UI가 없으면 기본값 사용
+            const isIndoor = courtIndex < indoorCount;
+            const location = locationSelect ? locationSelect.value : (isIndoor ? 'INDOOR' : 'OUTDOOR');
+            // 감면유형 기본값: 첫 번째 코트는 법정감면(fiveDiscount), 나머지는 감면없음(noDiscount)
+            const defaultDiscountType = courtIndex === 0 ? 'fiveDiscount' : 'noDiscount';
+            const discountType = discountSelect ? discountSelect.value : defaultDiscountType;
+
+            slots.push({
+                courtIndex: courtIndex,
+                startHour: hour,
+                endHour: hour + 1,
+                location: location,
+                discountType: discountType,
+                price: 0
+            });
+        }
+    }
+
+    return slots;
 }
 
 function updateBallProviderDetails() {
@@ -324,8 +531,8 @@ function setDefaultValues() {
     indoorCourtCountSelect.value = '2';
     outdoorCourtCountSelect.value = '0';
 
-    // 코트별 감면유형 선택 UI 생성
-    updateCourtTypeSelectors();
+    // 시간×코트 매트릭스 UI 생성
+    updateSlotMatrix();
 
     updateTotalParticipants();
     ballProviderCountSelect.value = '1';
@@ -356,7 +563,7 @@ function attachQuickButtonListeners() {
                 if (targetId === 'ballProviderCount') {
                     updateBallProviderDetails();
                 } else if (targetId === 'indoorCourtCount' || targetId === 'outdoorCourtCount') {
-                    updateCourtTypeSelectors(); // 코트수 변경시 감면유형 UI 업데이트
+                    updateSlotMatrix(); // 코트수 변경시 매트릭스 UI 업데이트
                     updateTotalParticipants();
                     updateBallProviderDetails(); // 코트수 변경시 공 개수도 업데이트
                 }
@@ -385,46 +592,31 @@ function calculateFees() {
         return;
     }
 
+    const totalCourts = indoorCourtCount + outdoorCourtCount;
+    if (totalCourts === 0) {
+        alert('코트를 선택해주세요.');
+        return;
+    }
+
     const selectedDate = new Date(usageDateStr);
     const month = selectedDate.getMonth() + 1;
     const isDayOff = isWeekend(usageDateStr);
     const dayType = isDayOff ? 'weekend' : 'weekday';
 
+    // 매트릭스에서 슬롯 데이터 수집
+    const slots = collectSlotsFromMatrix();
+
+    // 각 슬롯 요금 계산
     let totalCourtFee = 0;
     let totalBallCost = 0;
 
-    // 실내 코트 계산 (조명 포함 요금표 사용)
-    for (let i = 1; i <= indoorCourtCount; i++) {
-        const courtTypeElement = document.getElementById(`indoorCourt${i}Type`);
-        const discountType = courtTypeElement ? courtTypeElement.value : 'iksan';
+    slots.forEach(slot => {
+        slot.price = calculateSlotPrice(slot, month, dayType);
+        totalCourtFee += slot.price;
+    });
 
-        // 실내는 시간에 관계없이 동일 요금 (조명 포함)
-        const hourlyFee = COURT_FEES.INDOOR[discountType][dayType];
-        const hours = endHour - startHour;
-        totalCourtFee += hourlyFee * hours;
-    }
-
-    // 실외 코트 계산
-    for (let i = 1; i <= outdoorCourtCount; i++) {
-        const courtTypeElement = document.getElementById(`outdoorCourt${i}Type`);
-        const discountType = courtTypeElement ? courtTypeElement.value : 'iksan';
-
-        for (let h = startHour; h < endHour; h++) {
-            const timeCategory = getTimeCategory(month, h);
-            if (timeCategory) {
-                if (timeCategory === 'night') {
-                    // 야간: 요금표에 조명비 포함
-                    totalCourtFee += COURT_FEES.OUTDOOR.night[discountType][dayType];
-                } else if (timeCategory === 'early') {
-                    // 조기: 주간 코트비 + 조명비 4,000원
-                    totalCourtFee += COURT_FEES.OUTDOOR.dayTime[discountType][dayType] + LIGHTING_FEE;
-                } else {
-                    // 주간: 코트비만
-                    totalCourtFee += COURT_FEES.OUTDOOR.dayTime[discountType][dayType];
-                }
-            }
-        }
-    }
+    // 슬롯별 상세 내역 표시
+    displaySlotDetails(slots, indoorCourtCount, month);
 
     // 테니스공 비용 계산
     for (let i = 1; i <= ballProviderCount; i++) {
@@ -544,26 +736,32 @@ usageDateInput.addEventListener('change', (event) => {
     // 평일/주말 상관없이 모두 동일한 코트 설정
     indoorCourtCountSelect.value = '2';
     outdoorCourtCountSelect.value = '0';
-    updateCourtTypeSelectors();
+    updateSlotMatrix();
     updateTotalParticipants();
     updateBallProviderDetails();
 });
 
-// 시작 시간 변경 시 종료 시간 자동 설정
+// 시작 시간 변경 시 종료 시간 자동 설정 및 매트릭스 업데이트
 startTimeSelect.addEventListener('change', (event) => {
     const startHour = parseInt(event.target.value);
     const endHour = Math.min(startHour + 2, 22); // 2시간 후로 설정하되 22시를 넘지 않음
     endTimeSelect.value = String(endHour).padStart(2, '0');
+    updateSlotMatrix();
 });
 
-// 코트 수 변경 시 감면유형 UI, 인원, 공 제공자 세부사항 업데이트
+// 종료 시간 변경 시 매트릭스 업데이트
+endTimeSelect.addEventListener('change', () => {
+    updateSlotMatrix();
+});
+
+// 코트 수 변경 시 매트릭스 UI, 인원, 공 제공자 세부사항 업데이트
 indoorCourtCountSelect.addEventListener('change', () => {
-    updateCourtTypeSelectors();
+    updateSlotMatrix();
     updateTotalParticipants();
     updateBallProviderDetails();
 });
 outdoorCourtCountSelect.addEventListener('change', () => {
-    updateCourtTypeSelectors();
+    updateSlotMatrix();
     updateTotalParticipants();
     updateBallProviderDetails();
 });
@@ -579,44 +777,53 @@ shareKakaoBtn.addEventListener('click', function() {
     }
 
     let shareText = `🎾 코트비 계산 결과 🎾\n\n`;
+
+    // 슬롯별 상세 내역 추가
+    if (slotDetailsDiv && slotDetailsDiv.children.length > 0) {
+        const courtDetails = slotDetailsDiv.querySelectorAll('.court-detail');
+        courtDetails.forEach(courtDetail => {
+            const courtLabel = courtDetail.querySelector('.court-label');
+            if (courtLabel) {
+                shareText += `${courtLabel.textContent}\n`;
+            }
+            const slotItems = courtDetail.querySelectorAll('.slot-item');
+            slotItems.forEach(item => {
+                shareText += `${item.textContent}\n`;
+            });
+        });
+        shareText += `\n`;
+    }
+
     shareText += `총 코트 대여료: ${totalCourtRentalDisplayFeeSpan.textContent}\n`;
     shareText += `총 테니스 비용 (공 포함): ${totalTennisCostSpan.textContent}\n\n`;
     shareText += `1. 일반 참가자 송금액: ${regularParticipantAmountSpan.textContent}\n`;
-    
+
     // 2. 테니스공 제공자 정산 부분 처리 개선
     if (ballProviderSettlementDiv.children.length > 0) {
-        shareText += `\n2. 테니스공 제공자 정산:\n`; // 메인 제목은 여기서 한 번만 추가
+        shareText += `\n2. 테니스공 제공자 정산:\n`;
 
-        let isFirstChild = true; 
+        let isFirstChild = true;
         Array.from(ballProviderSettlementDiv.children).forEach(child => {
             if (isFirstChild) {
-                // 첫 번째 자식은 HTML에 '💰 2. 테니스공 제공자 정산:' 헤더이므로 스킵
-                // 이미 위에서 shareText에 추가했기 때문
                 isFirstChild = false;
-                return; 
+                return;
             }
 
             let lineText = child.textContent.trim();
 
-            // 공 제공자 라인에 테니스공 이모지 추가
             if (lineText.startsWith('- 공 제공자')) {
                 lineText = `🎾 ${lineText}`;
             }
 
-            // 기존에 HTML에서 추가된 이모지들은 textContent에 이미 포함되어 있으므로,
-            // 별도로 추가하거나 제거할 필요 없이 그대로 사용합니다.
-            // 예를 들어 '💰 환급:'이나 '🏃‍♂️ 부지런한사람:'은 textContent에 이미 있습니다.
-            // 다만, 들여쓰기를 위해 다시 검사하여 추가합니다.
             if (lineText.startsWith('-') || lineText.includes('환급:') || lineText.includes('부지런한사람:')) {
                 shareText += `  ${lineText}\n`;
             } else {
                 shareText += `${lineText}\n`;
             }
         });
-        // 마지막에 추가적인 줄바꿈 추가 (선택 사항, 내용에 따라 조절)
         shareText += `\n`;
     }
-    
+
     if (courtManagerSection.style.display !== 'none') {
         shareText += `\n🌟 코트 대여 임무: ${courtManagerSpan.textContent}\n\n`;
     }
